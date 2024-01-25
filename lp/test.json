@@ -1,0 +1,14 @@
+[
+  {
+    "id": "",
+    "event": "",
+    "tokenX": "ethereum-eth-0x0000000000000000000000000000000000000000",
+    "tokenY": "ethereum-usdt-0xd85476c906b5301e8e9eb58d174a6f96b9dfc5ee",
+    "feeRatio": "0.003",
+    "currentSqrtPrice": "0.000054793471910516611345696978280080",
+    "lowSqrtPrice": "0.000044721359549995793928183473374626",
+    "highSqrtPrice": "0.000063245553203367586639977870888654",
+    "liquidity": "50000000000000000",
+    "priceDirection": "both"
+  }
+]
