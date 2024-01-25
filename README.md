@@ -45,3 +45,7 @@ Fill in your MySQL DSN / ECC private key/ Genesis tx in run.sh
 ```
 source run.sh
 ```
+
+### GENESIS 
+
+Genesis tx [0x91be83007f1b642d328ab01a7759f38b75f89a61079a998c0fce834fc36f7b91](https://scan.everpay.io/tx/0x91be83007f1b642d328ab01a7759f38b75f89a61079a998c0fce834fc36f7b91)
