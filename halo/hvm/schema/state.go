@@ -9,13 +9,11 @@ import (
 )
 
 type RouterState struct {
-	Router           string                `json:"router"`
-	SwapFeeRecipient string                `json:"swapFeeRecipient"`
-	Pools            map[string]*Pool      `json:"pools"`      // pool id -> pool
-	EverTokens       map[string]*EverToken `json:"everTokens"` // token id -> everpay token
-
-	LpMinStake string `json:"lpMinStake"` // minum amount lp stake
-	LpPenalty  string `json:"lpPenalty"`  // penalty for lp evil
+	Router           string           `json:"router"`
+	SwapFeeRecipient string           `json:"swapFeeRecipient"`
+	Pools            map[string]*Pool `json:"pools"`      // pool id -> pool
+	LpMinStake       string           `json:"lpMinStake"` // minum amount lp stake
+	LpPenalty        string           `json:"lpPenalty"`  // penalty for lp evil
 }
 
 type State struct {
@@ -79,19 +77,6 @@ func CopyRouterState(dst, src *RouterState) {
 			FeeRatio:  p.FeeRatio,
 		}
 		dst.Pools[np.ID()] = np
-	}
-
-	dst.EverTokens = make(map[string]*EverToken)
-	for _, t := range src.EverTokens {
-		nt := &EverToken{
-			ID:        t.ID,
-			Tag:       t.Tag,
-			Symbol:    t.Symbol,
-			Decimals:  t.Decimals,
-			ChainType: t.ChainType,
-			ChainID:   t.ChainID,
-		}
-		dst.EverTokens[nt.ID] = nt
 	}
 }
 
