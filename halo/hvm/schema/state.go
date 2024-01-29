@@ -9,11 +9,15 @@ import (
 )
 
 type RouterState struct {
-	Router           string           `json:"router"`
+	Router           string           `json:"router"` // router address
+	HTTPEndpoint     string           `json:"httpEndpoint"`
+	WSEndpoint       string           `json:"wsEndpoint"`
+	SwapFeeRatio     string           `json:"swapFeeRatio"`
 	SwapFeeRecipient string           `json:"swapFeeRecipient"`
 	Pools            map[string]*Pool `json:"pools"`      // pool id -> pool
 	LpMinStake       string           `json:"lpMinStake"` // minum amount lp stake
 	LpPenalty        string           `json:"lpPenalty"`  // penalty for lp evil
+	Info             string           `json:"info"`       // router info
 }
 
 type State struct {
@@ -65,9 +69,13 @@ func (s *State) Hash() string {
 
 func CopyRouterState(dst, src *RouterState) {
 	dst.Router = src.Router
+	dst.HTTPEndpoint = src.HTTPEndpoint
+	dst.WSEndpoint = src.WSEndpoint
+	dst.SwapFeeRatio = src.SwapFeeRatio
 	dst.SwapFeeRecipient = src.SwapFeeRecipient
 	dst.LpMinStake = src.LpMinStake
 	dst.LpPenalty = src.LpPenalty
+	dst.Info = src.Info
 
 	dst.Pools = make(map[string]*Pool)
 	for _, p := range src.Pools {

@@ -66,6 +66,13 @@ func (h *HVM) VerifyTx(tx schema.Transaction) (err error) {
 		if InSlice(h.Routers, tx.From) {
 			return schema.ErrRouterAlreadyJoined
 		}
+		routerState, err := TxJoinParamsVerify(tx.Params)
+		if err != nil {
+			return err
+		}
+		if routerState.Router != tx.From {
+			return schema.ErrInvalidRouterAddress
+		}
 		staked := h.Token.TotalStaked(tx.From, "")
 		staked_, _ := new(big.Int).SetString(staked, 10)
 		routerMinStake, _ := new(big.Int).SetString(h.RouterMinStake, 10)
@@ -190,7 +197,13 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		if InSlice(h.Routers, tx.From) {
 			return schema.ErrRouterAlreadyJoined
 		}
-
+		routerState, err := TxJoinParamsVerify(tx.Params)
+		if err != nil {
+			return err
+		}
+		if routerState.Router != tx.From {
+			return schema.ErrInvalidRouterAddress
+		}
 		staked := h.Token.TotalStaked(tx.From, "")
 		staked_, _ := new(big.Int).SetString(staked, 10)
 		routerMinStake, _ := new(big.Int).SetString(h.RouterMinStake, 10)
@@ -199,6 +212,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		}
 
 		h.Routers = append(h.Routers, tx.From)
+		h.RouterStates[tx.From] = routerState
 
 	case schema.TxActionLeave:
 		if !InSlice(h.Routers, tx.From) {

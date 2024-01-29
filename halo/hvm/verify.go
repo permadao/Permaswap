@@ -127,6 +127,18 @@ func TxUnstakeParamsVerify(txParams string) (stakePool string, amount *big.Int, 
 	return
 }
 
+func TxJoinParamsVerify(txParams string) (routerState *schema.RouterState, err error) {
+	if err := json.Unmarshal([]byte(txParams), &routerState); err != nil {
+		log.Error("invalid params of join tx to unmarshal", "params", txParams, "err", err)
+		return nil, schema.ErrInvalidTxParams
+	}
+	if len(routerState.Info) > 250 {
+		log.Error("info of join tx is too long", "info", routerState.Info)
+		return nil, schema.ErrInvalidTxParams
+	}
+	return
+}
+
 func TxProposeParamsVerify(params schema.TxProposeParams) (
 	start, end, runTimes int64, source, initData string,
 	onlyAcceptedTxActions []string, err error) {
