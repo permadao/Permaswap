@@ -1,4 +1,5 @@
 __pycache__/
+go.sum
 build
 run.sh
 .DS_Store
