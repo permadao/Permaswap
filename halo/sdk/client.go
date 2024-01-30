@@ -23,7 +23,7 @@ func NewClient(haloURL string) *Client {
 
 func (c *Client) GetInfo() (info schema.InfoRes, err error) {
 	req := c.cli.Request()
-	req.Path("/halo/info")
+	req.AddPath("/info")
 
 	res, err := req.Send()
 	if err != nil {
@@ -42,7 +42,7 @@ func (c *Client) GetInfo() (info schema.InfoRes, err error) {
 
 func (c *Client) SubmitTx(tx hvmSchema.Transaction) (everhash string, err error) {
 	req := c.cli.Request()
-	req.Path("/halo/submit")
+	req.AddPath("/submit")
 	req.Method("POST")
 	req.Use(body.JSON(tx))
 
@@ -55,6 +55,10 @@ func (c *Client) SubmitTx(tx hvmSchema.Transaction) (everhash string, err error)
 		err = errors.New(res.String())
 		return
 	}
-	everhash = res.String()
-	return
+	submitRes := schema.SubmitRes{}
+	err = json.Unmarshal(res.Bytes(), &submitRes)
+	if err != nil {
+		return
+	}
+	return submitRes.EverHash, nil
 }
