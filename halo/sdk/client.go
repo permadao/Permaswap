@@ -3,7 +3,6 @@ package sdk
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	hvmSchema "github.com/permadao/permaswap/halo/hvm/schema"
 	"github.com/permadao/permaswap/halo/schema"
@@ -24,7 +23,7 @@ func NewClient(haloURL string) *Client {
 
 func (c *Client) GetInfo() (info schema.InfoRes, err error) {
 	req := c.cli.Request()
-	req.Path("/info")
+	req.Path("/halo/info")
 
 	res, err := req.Send()
 	if err != nil {
@@ -43,7 +42,7 @@ func (c *Client) GetInfo() (info schema.InfoRes, err error) {
 
 func (c *Client) SubmitTx(tx hvmSchema.Transaction) (everhash string, err error) {
 	req := c.cli.Request()
-	req.Path(fmt.Sprintf("/submit"))
+	req.Path("/halo/submit")
 	req.Method("POST")
 	req.Use(body.JSON(tx))
 

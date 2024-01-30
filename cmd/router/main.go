@@ -8,6 +8,8 @@ import (
 
 	"github.com/everFinance/goether"
 	"github.com/everVision/everpay-kits/sdk"
+	halosdk "github.com/permadao/permaswap/halo/sdk"
+
 	"github.com/permadao/permaswap/router"
 	"github.com/urfave/cli/v2"
 )
@@ -22,11 +24,13 @@ func main() {
 			&cli.Int64Flag{Name: "eth_chain_id", Value: 5, Usage: "eth chainId", EnvVars: []string{"ETH_CHAIN_ID"}},
 			&cli.StringFlag{Name: "mysql", Value: "root@tcp(127.0.0.1:3306)/perma?charset=utf8mb4&parseTime=True&loc=Local", Usage: "mysql dsn", EnvVars: []string{"MYSQL"}},
 			&cli.StringFlag{Name: "ecc_private", Value: "", Usage: "ecc custodian private", EnvVars: []string{"ECC_PRIVATE"}},
-			&cli.StringFlag{Name: "router_name", Value: "perma", Usage: "router name", EnvVars: []string{"ROUTER_NAME"}},
+			&cli.StringFlag{Name: "name", Value: "perma", Usage: "router name", EnvVars: []string{"ROUTER_NAME"}},
+			&cli.StringFlag{Name: "domain", Value: "", Usage: "router domain", EnvVars: []string{"ROUTER_DOMAIN"}},
 
 			// halo
 			&cli.StringFlag{Name: "halo_genesis_tx", Value: "", Usage: "halo genesis tx everhash", EnvVars: []string{"HALO_GENESIS_TX"}},
 			&cli.StringFlag{Name: "halo_api_url_prefix", Value: "", Usage: "halo api url prefix", EnvVars: []string{"HALO_API_URL_PREFIX"}},
+			&cli.StringFlag{Name: "halo_url", Value: "", Usage: "default halo tx submit url", EnvVars: []string{"HALO_URL"}},
 		},
 		Action: run,
 	}
@@ -50,7 +54,15 @@ func run(c *cli.Context) error {
 		panic(err)
 	}
 
-	r := router.New(c.Int64("eth_chain_id"), everSDK, c.String("nft"), c.String("mysql"), false, c.String("halo_genesis_tx"))
+	var haloSDK *halosdk.SDK
+	if c.String("halo_url") != "" {
+		haloSDK, err = halosdk.New(signer, c.String("halo_url"))
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	r := router.New(c.String("name"), c.String("domain"), c.Int64("eth_chain_id"), everSDK, c.String("nft"), c.String("mysql"), c.String("halo_genesis_tx"), haloSDK, false)
 	if c.String("halo_genesis_tx") != "" {
 		r.Run(c.String("port"), c.String("halo_api_url_prefix"))
 	} else {

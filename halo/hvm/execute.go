@@ -232,6 +232,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		}
 		log.Info("Remove router from routers", "router", tx.From)
 		h.Routers = RemoveFromSlice(h.Routers, tx.From)
+		delete(h.RouterStates, tx.From)
 
 	case schema.TxActionCall:
 		proposalID, _, _, err := TxCallParamsVerify(tx.Params)

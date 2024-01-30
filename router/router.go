@@ -9,6 +9,8 @@ import (
 	everSchema "github.com/everVision/everpay-kits/schema"
 
 	"github.com/everVision/everpay-kits/sdk"
+	halosdk "github.com/permadao/permaswap/halo/sdk"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron"
 	"github.com/permadao/permaswap/core"
@@ -22,6 +24,8 @@ import (
 var log = logger.New("router")
 
 type Router struct {
+	name    string
+	domain  string
 	engine  *gin.Engine
 	server  *http.Server
 	chainID int64
@@ -89,9 +93,11 @@ type Router struct {
 
 	// halo
 	haloServer *halo.Halo
+	haloSDK    *halosdk.SDK
 }
 
-func New(chainID int64, everSDK *sdk.SDK, nftApiURL, dsn string, dryRun bool, halo_genesis_tx string) *Router {
+func New(name, domain string, chainID int64, everSDK *sdk.SDK, nftApiURL, dsn string,
+	halo_genesis_tx string, haloSDK *halosdk.SDK, dryRun bool) *Router {
 	w := &WDB{}
 	if !dryRun {
 		w = NewWDB(dsn)
@@ -119,6 +125,8 @@ func New(chainID int64, everSDK *sdk.SDK, nftApiURL, dsn string, dryRun bool, ha
 	}
 
 	return &Router{
+		name:    name,
+		domain:  domain,
 		engine:  gin.Default(),
 		chainID: chainID,
 		tokens:  tokens,
@@ -173,6 +181,7 @@ func New(chainID int64, everSDK *sdk.SDK, nftApiURL, dsn string, dryRun bool, ha
 		penalty: NewPenalty(),
 
 		haloServer: haloServer,
+		haloSDK:    haloSDK,
 	}
 }
 
@@ -210,6 +219,9 @@ func (r *Router) Run(port, haloAPIURLPrefix string) {
 	if r.haloServer != nil {
 		r.haloServer.Run("")
 	}
+	if r.haloSDK != nil {
+		r.Join()
+	}
 }
 
 func (r *Router) Close() {
@@ -219,4 +231,9 @@ func (r *Router) Close() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	r.server.Shutdown(ctx)
+	if r.haloSDK != nil {
+		tx, err := r.haloSDK.Leave()
+		log.Info("Leave tx submitted:", "tx", tx.EverHash, "err", err)
+	}
+	log.Info("router closed")
 }
