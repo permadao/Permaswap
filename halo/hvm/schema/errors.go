@@ -17,6 +17,7 @@ var (
 	ErrTxExecuted           = errors.New("err_tx_executed")
 	ErrInvalidStakePool     = errors.New("err_invalid_stake_pool")
 	ErrInvalidRouterAddress = errors.New("err_invalid_router_address")
+	ErrInvalidRouterName    = errors.New("err_invalid_router_name")
 	ErrInsufficientStake    = errors.New("err_insufficient_stake")
 	ErrRouterAlreadyJoined  = errors.New("err_router_already_joined")
 	ErrNotARouter           = errors.New("err_not_a_router")

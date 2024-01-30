@@ -10,6 +10,7 @@ import (
 
 type RouterState struct {
 	Router           string           `json:"router"` // router address
+	Name             string           `json:"name"`
 	HTTPEndpoint     string           `json:"httpEndpoint"`
 	WSEndpoint       string           `json:"wsEndpoint"`
 	SwapFeeRatio     string           `json:"swapFeeRatio"`
@@ -69,6 +70,7 @@ func (s *State) Hash() string {
 
 func CopyRouterState(dst, src *RouterState) {
 	dst.Router = src.Router
+	dst.Name = src.Name
 	dst.HTTPEndpoint = src.HTTPEndpoint
 	dst.WSEndpoint = src.WSEndpoint
 	dst.SwapFeeRatio = src.SwapFeeRatio

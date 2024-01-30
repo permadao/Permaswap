@@ -73,6 +73,12 @@ func (h *HVM) VerifyTx(tx schema.Transaction) (err error) {
 		if routerState.Router != tx.From {
 			return schema.ErrInvalidRouterAddress
 		}
+		for _, r := range h.RouterStates {
+			if r.Name == routerState.Name {
+				log.Error("router name already exists", "name", routerState.Name)
+				return schema.ErrInvalidRouterName
+			}
+		}
 		staked := h.Token.TotalStaked(tx.From, "")
 		staked_, _ := new(big.Int).SetString(staked, 10)
 		routerMinStake, _ := new(big.Int).SetString(h.RouterMinStake, 10)
@@ -203,6 +209,12 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		}
 		if routerState.Router != tx.From {
 			return schema.ErrInvalidRouterAddress
+		}
+		for _, r := range h.RouterStates {
+			if r.Name == routerState.Name {
+				log.Error("router name already exists", "name", routerState.Name)
+				return schema.ErrInvalidRouterName
+			}
 		}
 		staked := h.Token.TotalStaked(tx.From, "")
 		staked_, _ := new(big.Int).SetString(staked, 10)
