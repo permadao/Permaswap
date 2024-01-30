@@ -93,5 +93,5 @@ func (h *Halo) submit(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, everTx.HexHash())
+	c.JSON(http.StatusOK, schema.SubmitRes{EverHash: everTx.HexHash()})
 }

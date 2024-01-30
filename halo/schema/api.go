@@ -9,3 +9,7 @@ type InfoRes struct {
 	GenesisTxEverHash string `json:"genesisTxEverHash"`
 	HaloAddr          string `json:"haloAddr"`
 }
+
+type SubmitRes struct {
+	EverHash string `json:"everHash"`
+}

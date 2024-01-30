@@ -117,7 +117,6 @@ func (s *SDK) sendTx(action, params string) (*schema.Transaction, error) {
 		log.Error("submit everTx", "error", err)
 		return &hTx, err
 	}
-
 	hTx.EverHash = everhash
 	return &hTx, nil
 }
