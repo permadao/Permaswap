@@ -2,6 +2,7 @@ package hvm
 
 import (
 	"math/big"
+	"strings"
 
 	"github.com/permadao/permaswap/halo/account"
 	"github.com/permadao/permaswap/halo/hvm/schema"
@@ -74,7 +75,7 @@ func (h *HVM) VerifyTx(tx schema.Transaction) (err error) {
 			return schema.ErrInvalidRouterAddress
 		}
 		for _, r := range h.RouterStates {
-			if r.Name == routerState.Name {
+			if strings.EqualFold(r.Name, routerState.Name) {
 				log.Error("router name already exists", "name", routerState.Name)
 				return schema.ErrInvalidRouterName
 			}
@@ -211,7 +212,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 			return schema.ErrInvalidRouterAddress
 		}
 		for _, r := range h.RouterStates {
-			if r.Name == routerState.Name {
+			if strings.EqualFold(r.Name, routerState.Name) {
 				log.Error("router name already exists", "name", routerState.Name)
 				return schema.ErrInvalidRouterName
 			}
