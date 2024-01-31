@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"crypto/sha256"
+
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 )
@@ -78,6 +80,11 @@ func (t *Transaction) Hash() []byte {
 
 func (t *Transaction) HexHash() string {
 	return hexutil.Encode(t.Hash())
+}
+
+func (t *Transaction) ArHash() []byte {
+	msg := sha256.Sum256([]byte(t.String()))
+	return msg[:]
 }
 
 type TxTransferParams struct {

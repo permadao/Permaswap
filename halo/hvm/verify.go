@@ -2,8 +2,10 @@ package hvm
 
 import (
 	"encoding/json"
+
 	"math/big"
 
+	everSchema "github.com/everVision/everpay-kits/schema"
 	"github.com/permadao/permaswap/halo/account"
 	"github.com/permadao/permaswap/halo/hvm/schema"
 )
@@ -58,9 +60,19 @@ func (h *HVM) TxVerify(tx schema.Transaction, dryRun bool) (acc *account.Account
 	}
 
 	// verify tx nonce and signature
+	hash := []byte{}
+	switch acc.Type {
+	case everSchema.AccountTypeEVM:
+		hash = tx.Hash()
+	case everSchema.AccountTypeAR:
+		hash = tx.ArHash()
+	default:
+		return nil, 0, nil, schema.ErrInvalidAccountType
+	}
+
 	nonce, err = acc.Verify(account.Transaction{
 		Nonce: tx.Nonce,
-		Hash:  tx.Hash(),
+		Hash:  hash,
 		Sig:   tx.Sig,
 	})
 	if err != nil {

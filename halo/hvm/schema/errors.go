@@ -22,4 +22,5 @@ var (
 	ErrRouterAlreadyJoined  = errors.New("err_router_already_joined")
 	ErrNotARouter           = errors.New("err_not_a_router")
 	ErrNoProposalFound      = errors.New("err_no_proposal_found")
+	ErrInvalidAccountType   = errors.New("err_invalid_account_type")
 )
