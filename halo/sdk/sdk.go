@@ -64,6 +64,42 @@ func (s *SDK) updateInfo() error {
 	return nil
 }
 
+func (s *SDK) Transfer(to, amount string) (*schema.Transaction, error) {
+	params := schema.TxTransferParams{
+		To:     to,
+		Amount: amount,
+	}
+	by, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	return s.sendTx(schema.TxActionTransfer, string(by))
+}
+
+func (s *SDK) Unstake(stakePool, amount string) (*schema.Transaction, error) {
+	params := schema.TxUnstakeParams{
+		StakePool: stakePool,
+		Amount:    amount,
+	}
+	by, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	return s.sendTx(schema.TxActionUnstake, string(by))
+}
+
+func (s *SDK) Stake(stakePool, amount string) (*schema.Transaction, error) {
+	params := schema.TxStakeParams{
+		StakePool: stakePool,
+		Amount:    amount,
+	}
+	by, err := json.Marshal(params)
+	if err != nil {
+		return nil, err
+	}
+	return s.sendTx(schema.TxActionStake, string(by))
+}
+
 func (s *SDK) Join(routerState schema.RouterState) (*schema.Transaction, error) {
 	by, err := json.Marshal(routerState)
 	if err != nil {
