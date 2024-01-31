@@ -11,7 +11,7 @@ func TestSDK_Transfer(t *testing.T) {
 	// testSDK, err := New(signer, "https://node.halonode.com")
 	// assert.NoError(t, err)
 	// amount := "100000000000000000000"
-	// to := "0x61EbF673c200646236B2c53465bcA0699455d5FA"
+	// to := ""
 	// result, err := testSDK.Transfer(to, amount)
 	// t.Log(result.HexHash())
 	// t.Log(err)
