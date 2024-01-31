@@ -30,7 +30,7 @@ func main() {
 		Name: "lpconfig",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{Name: "info", Aliases: []string{"i"}, Value: false, Usage: "swap info"},
-			//&cli.StringFlag{Name: "perma", Value: "https://router0-dev.permaswap.network", Usage: "perma router http url"},
+			&cli.StringFlag{Name: "router", Aliases: []string{"r"}, Value: "", Usage: "perma router http url"},
 			//&cli.StringFlag{Name: "pay", Value: "https://api-dev.everpay.io", Usage: "pay url"},
 
 			&cli.StringFlag{Name: "network", Aliases: []string{"n"}, Value: "testnet", Usage: "nework: testnet or mainnet"},
@@ -177,6 +177,10 @@ func run(c *cli.Context) error {
 		perma = "https://router.permaswap.network"
 	} else {
 		return ErrInvalidParam
+	}
+
+	if c.String("router") != "" {
+		perma = c.String("router")
 	}
 
 	info, err := getSwapInfo(perma)
