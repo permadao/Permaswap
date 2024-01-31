@@ -6,6 +6,7 @@ import (
 
 func TestSDK_Transfer(t *testing.T) {
 	// signer, err := goether.NewSigner("")
+	// signer, err := goar.NewSignerFromPath("")
 	// assert.NoError(t, err)
 	// t.Log(signer.Address)
 	// testSDK, err := New(signer, "https://node.halonode.com")

@@ -150,7 +150,7 @@ func (s *SDK) sendTx(action, params string) (*schema.Transaction, error) {
 	// submit to everpay server
 	everhash, err := s.Cli.SubmitTx(hTx)
 	if err != nil {
-		log.Error("submit everTx", "error", err)
+		log.Error("submit hTx", "error", err)
 		return &hTx, err
 	}
 	hTx.EverHash = everhash
