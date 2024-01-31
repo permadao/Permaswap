@@ -11,7 +11,7 @@ import (
 )
 
 func TestSDKConnect(t *testing.T) {
-	testRouter := router.New(5, nil, "", "", true, "")
+	testRouter := router.New("", "", 5, nil, "", "", "", nil, false)
 	testRouter.Run(testPort, "")
 	defer testRouter.Close()
 

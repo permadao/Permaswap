@@ -2,6 +2,7 @@ package hvm
 
 import (
 	"math/big"
+	"strings"
 
 	"github.com/permadao/permaswap/halo/account"
 	"github.com/permadao/permaswap/halo/hvm/schema"
@@ -65,6 +66,19 @@ func (h *HVM) VerifyTx(tx schema.Transaction) (err error) {
 	case schema.TxActionJoin:
 		if InSlice(h.Routers, tx.From) {
 			return schema.ErrRouterAlreadyJoined
+		}
+		routerState, err := TxJoinParamsVerify(tx.Params)
+		if err != nil {
+			return err
+		}
+		if routerState.Router != tx.From {
+			return schema.ErrInvalidRouterAddress
+		}
+		for _, r := range h.RouterStates {
+			if strings.EqualFold(r.Name, routerState.Name) {
+				log.Error("router name already exists", "name", routerState.Name)
+				return schema.ErrInvalidRouterName
+			}
 		}
 		staked := h.Token.TotalStaked(tx.From, "")
 		staked_, _ := new(big.Int).SetString(staked, 10)
@@ -190,7 +204,19 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		if InSlice(h.Routers, tx.From) {
 			return schema.ErrRouterAlreadyJoined
 		}
-
+		routerState, err := TxJoinParamsVerify(tx.Params)
+		if err != nil {
+			return err
+		}
+		if routerState.Router != tx.From {
+			return schema.ErrInvalidRouterAddress
+		}
+		for _, r := range h.RouterStates {
+			if strings.EqualFold(r.Name, routerState.Name) {
+				log.Error("router name already exists", "name", routerState.Name)
+				return schema.ErrInvalidRouterName
+			}
+		}
 		staked := h.Token.TotalStaked(tx.From, "")
 		staked_, _ := new(big.Int).SetString(staked, 10)
 		routerMinStake, _ := new(big.Int).SetString(h.RouterMinStake, 10)
@@ -199,6 +225,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		}
 
 		h.Routers = append(h.Routers, tx.From)
+		h.RouterStates[tx.From] = routerState
 
 	case schema.TxActionLeave:
 		if !InSlice(h.Routers, tx.From) {
@@ -206,6 +233,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		}
 		log.Info("Remove router from routers", "router", tx.From)
 		h.Routers = RemoveFromSlice(h.Routers, tx.From)
+		delete(h.RouterStates, tx.From)
 
 	case schema.TxActionCall:
 		proposalID, _, _, err := TxCallParamsVerify(tx.Params)

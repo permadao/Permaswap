@@ -13,6 +13,7 @@ func init() {
 	Symbols["github.com/permadao/permaswap/halo/schema/schema"] = map[string]reflect.Value{
 		// function, constant and variable definitions
 		"ErrInvalidGenesisBalance":     reflect.ValueOf(&schema.ErrInvalidGenesisBalance).Elem(),
+		"ErrInvalidGenesisStake":       reflect.ValueOf(&schema.ErrInvalidGenesisStake).Elem(),
 		"ErrInvalidGenesisTotalSupply": reflect.ValueOf(&schema.ErrInvalidGenesisTotalSupply).Elem(),
 		"ErrInvalidGenesisTx":          reflect.ValueOf(&schema.ErrInvalidGenesisTx).Elem(),
 		"ErrInvalidSubmitTxNonce":      reflect.ValueOf(&schema.ErrInvalidSubmitTxNonce).Elem(),

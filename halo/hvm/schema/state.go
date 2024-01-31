@@ -9,13 +9,17 @@ import (
 )
 
 type RouterState struct {
-	Router           string                `json:"router"`
-	SwapFeeRecipient string                `json:"swapFeeRecipient"`
-	Pools            map[string]*Pool      `json:"pools"`      // pool id -> pool
-	EverTokens       map[string]*EverToken `json:"everTokens"` // token id -> everpay token
-
-	LpMinStake string `json:"lpMinStake"` // minum amount lp stake
-	LpPenalty  string `json:"lpPenalty"`  // penalty for lp evil
+	Router           string           `json:"router"` // router address
+	Name             string           `json:"name"`
+	Logo             string           `json:"logo"` // logo url
+	HTTPEndpoint     string           `json:"httpEndpoint"`
+	WSEndpoint       string           `json:"wsEndpoint"`
+	SwapFeeRatio     string           `json:"swapFeeRatio"`
+	SwapFeeRecipient string           `json:"swapFeeRecipient"`
+	Pools            map[string]*Pool `json:"pools"`      // pool id -> pool
+	LpMinStake       string           `json:"lpMinStake"` // minum amount lp stake
+	LpPenalty        string           `json:"lpPenalty"`  // penalty for lp evil
+	Info             string           `json:"info"`       // router info
 }
 
 type State struct {
@@ -67,9 +71,15 @@ func (s *State) Hash() string {
 
 func CopyRouterState(dst, src *RouterState) {
 	dst.Router = src.Router
+	dst.Name = src.Name
+	dst.Logo = src.Logo
+	dst.HTTPEndpoint = src.HTTPEndpoint
+	dst.WSEndpoint = src.WSEndpoint
+	dst.SwapFeeRatio = src.SwapFeeRatio
 	dst.SwapFeeRecipient = src.SwapFeeRecipient
 	dst.LpMinStake = src.LpMinStake
 	dst.LpPenalty = src.LpPenalty
+	dst.Info = src.Info
 
 	dst.Pools = make(map[string]*Pool)
 	for _, p := range src.Pools {
@@ -79,19 +89,6 @@ func CopyRouterState(dst, src *RouterState) {
 			FeeRatio:  p.FeeRatio,
 		}
 		dst.Pools[np.ID()] = np
-	}
-
-	dst.EverTokens = make(map[string]*EverToken)
-	for _, t := range src.EverTokens {
-		nt := &EverToken{
-			ID:        t.ID,
-			Tag:       t.Tag,
-			Symbol:    t.Symbol,
-			Decimals:  t.Decimals,
-			ChainType: t.ChainType,
-			ChainID:   t.ChainID,
-		}
-		dst.EverTokens[nt.ID] = nt
 	}
 }
 
