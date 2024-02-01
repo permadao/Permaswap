@@ -17,8 +17,11 @@ type SDK struct {
 	chainID      string
 	feeRecipient string
 	fee          string
-	signerType   string // ecc, rsa
-	signer       interface{}
+
+	HaloAddr string
+
+	signerType string // ecc, rsa
+	signer     interface{}
 
 	AccId string
 	Cli   *Client
@@ -57,6 +60,7 @@ func (s *SDK) updateInfo() error {
 	s.dapp = info.Dapp
 	s.chainID = info.ChainID
 	s.feeRecipient = info.FeeRecipient
+	s.HaloAddr = info.HaloAddr
 
 	// todo
 	s.fee = "0"

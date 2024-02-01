@@ -340,6 +340,12 @@ func (o *Order) submitToEver() {
 	}
 
 	everSDK := o.router.sdk
+
+	to := everSDK.AccId
+	if o.router.haloSDK != nil {
+		to = o.router.haloSDK.HaloAddr
+	}
+
 	var err error
 	var everTx *everSchema.Transaction
 	for {
@@ -347,8 +353,7 @@ func (o *Order) submitToEver() {
 			o.Status = schema.OrderStatusExpired
 			return
 		}
-		// need retry
-		if everTx, err = everSDK.Bundle("ethereum-eth-0x0000000000000000000000000000000000000000", everSDK.AccId, big.NewInt(0), *o.Bundle); err == nil {
+		if everTx, err = everSDK.Bundle("ethereum-eth-0x0000000000000000000000000000000000000000", to, big.NewInt(0), *o.Bundle); err == nil {
 			break
 		} else {
 			log.Error("sumbit to everPay failed", "err", err)
