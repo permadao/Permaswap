@@ -54,9 +54,9 @@ if options.action == 'transfer':
         'amount': amount,
     }
 
-elif options.action == 'unstake':
+elif options.action == 'unstake' or options.action == 'stake':
     if not options.pool or not options.amount:
-        print(Fore.RED + 'invalid unstake options' + Style.RESET_ALL)
+        print(Fore.RED + 'invalid unstake/stake options' + Style.RESET_ALL)
         sys.exit(1)
 
     amount = str(Decimal(options.amount) * 10**halo_decimals)
@@ -64,7 +64,7 @@ elif options.action == 'unstake':
         'stakePool': options.pool,
         'amount': amount,
     }
-
+    
 else:
     print(Fore.RED + 'invalid action' + Style.RESET_ALL)
     sys.exit(1)
