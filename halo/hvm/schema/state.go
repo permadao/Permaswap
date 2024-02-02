@@ -44,8 +44,10 @@ type State struct {
 	Executed []string        `json:"executed"` // executed tx everhash hash
 	Validity map[string]bool `json:"validity"` // executed tx everhash hash -> bool
 
-	LatestTxHash string `json:"latestTxHash"`
-	StateHash    string `json:"stateHash"`
+	LatestTxHash     string `json:"latestTxHash"`
+	LatestTxEverHash string `json:"latestTxEverHash"`
+
+	StateHash string `json:"stateHash"`
 }
 
 type StateForProposal struct {

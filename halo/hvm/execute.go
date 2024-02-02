@@ -256,6 +256,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 		acc.UpdateNonce(nonce)
 	}
 	h.LatestTxHash = tx.HexHash()
+	h.LatestTxEverHash = tx.EverHash
 
 	if ProposalCalled != nil {
 		// run proposal executor
