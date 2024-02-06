@@ -24,6 +24,7 @@ func init() {
 		"GenesisTxData":   reflect.ValueOf((*schema.GenesisTxData)(nil)),
 		"HaloTransaction": reflect.ValueOf((*schema.HaloTransaction)(nil)),
 		"InfoRes":         reflect.ValueOf((*schema.InfoRes)(nil)),
+		"SubmitRes":       reflect.ValueOf((*schema.SubmitRes)(nil)),
 		"TxApply":         reflect.ValueOf((*schema.TxApply)(nil)),
 	}
 }

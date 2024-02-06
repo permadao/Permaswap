@@ -6,14 +6,19 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	everSchema "github.com/everVision/everpay-kits/schema"
 )
+
+type Oracle struct {
+	EverTokens map[string]everSchema.TokenInfo
+}
 
 type Executor struct {
 	LocalState     string `json:"localState"`
 	LocalStateHash string `json:"localStateHash"`
 	RunnedTimes    int64  `json:"runnedTimes"`
-	// in: tx, state, localState, initData out: state, localState, localStateHash error
-	Execute func(*Transaction, *StateForProposal, string, string) (*StateForProposal, string, string, error) `json:"-"`
+	// in: tx, state, oracle, localState, initData out: state, localState, localStateHash error
+	Execute func(*Transaction, *StateForProposal, *Oracle, string, string) (*StateForProposal, string, string, error) `json:"-"`
 }
 
 type Proposal struct {

@@ -17,7 +17,7 @@ import (
 	"github.com/permadao/permaswap/halo/hvm/schema"
 )
 
-func Execute(tx *schema.Transaction, state *schema.StateForProposal, localState string, initData string) (*schema.StateForProposal, string, string, error) {
+func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState string, initData string) (*schema.StateForProposal, string, string, error) {
 	amount, _ := new(big.Int).SetString("10000000000000000000", 10)
 	to := "0x7759cb78EaF06c470165F0B57af7Ffd737407D56"
 	dryRun := false
@@ -46,7 +46,7 @@ func TestProposal(t *testing.T) {
 	t.Log("Original state:", state.Token.Balances)
 
 	tx := schema.Transaction{}
-	state2, err := ProposalExecute(proposal, &tx, state.GetStateForProposal())
+	state2, err := ProposalExecute(proposal, &tx, state.GetStateForProposal(), nil)
 	assert.NoError(t, err)
 
 	t.Log("Original state after execute:", state.Token.Balances)

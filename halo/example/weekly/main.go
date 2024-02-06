@@ -25,7 +25,7 @@ type InitData struct {
 	Pays []Pay  `json:"pays"`
 }
 
-func Execute(tx *schema.Transaction, state *schema.StateForProposal, localState, initData string) (*schema.StateForProposal, string, error) {
+func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, error) {
 	var toPay InitData
 
 	if err := json.Unmarshal([]byte(initData), &toPay); err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/permadao/permaswap/halo/hvm/schema"
 )
 
-func Execute(tx *schema.Transaction, state *schema.StateForProposal, localState string) (*schema.StateForProposal, string, string, error) {
+func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {
 	amount, _ := new(big.Int).SetString("1000000000000000000000000", 10)
 	feeRecipient := "0x61EbF673c200646236B2c53465bcA0699455d5FA"
 	to := "0x61EbF673c200646236B2c53465bcA0699455d5FA"

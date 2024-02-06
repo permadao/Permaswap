@@ -92,7 +92,7 @@ func voteWeight(stakes map[string][]tokSchema.Stake) int64 {
 	return staked.Int64()
 }
 
-func Execute(tx *schema.Transaction, state *schema.StateForProposal, localState, initData string) (*schema.StateForProposal, string, string, error) {
+func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {
 	var init InitData
 	if initData == "" {
 		return state, localState, "", ErrPropsalInvalidInitData

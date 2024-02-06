@@ -48,10 +48,13 @@ func (h *Halo) txSaveProcess() {
 }
 
 func (h *Halo) txApplyProc(txToAppy *schema.TxApply) (err error) {
+	oracle := &hvmSchema.Oracle{
+		EverTokens: h.everSDK.GetTokens(),
+	}
 	if txToAppy.DryRun {
-		err = h.hvm.VerifyTx(txToAppy.Tx)
+		err = h.hvm.VerifyTx(txToAppy.Tx, oracle)
 	} else {
-		err = h.hvm.ExecuteTx(txToAppy.Tx)
+		err = h.hvm.ExecuteTx(txToAppy.Tx, oracle)
 	}
 	return
 }
@@ -76,7 +79,10 @@ func (h *Halo) processHaloTx(txResp everSchema.TxResponse) {
 	// submit to hvm
 	var err error
 	error := ""
-	if err = h.hvm.ExecuteTx(tx); err != nil {
+	oracle := &hvmSchema.Oracle{
+		EverTokens: h.everSDK.GetTokens(),
+	}
+	if err = h.hvm.ExecuteTx(tx, oracle); err != nil {
 		error = err.Error()
 	}
 	log.Info("execute tx return", "everHash", txResp.EverHash, "err", err)

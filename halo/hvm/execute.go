@@ -8,7 +8,7 @@ import (
 	"github.com/permadao/permaswap/halo/hvm/schema"
 )
 
-func (h *HVM) VerifyTx(tx schema.Transaction) (err error) {
+func (h *HVM) VerifyTx(tx schema.Transaction, oracle *schema.Oracle) (err error) {
 	_, nonce, fee, err := h.TxVerify(tx, true)
 	if err != nil {
 		return err
@@ -108,7 +108,7 @@ func (h *HVM) VerifyTx(tx schema.Transaction) (err error) {
 	return nil
 }
 
-func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
+func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error) {
 	defer func() {
 		if err != schema.ErrTxExecuted {
 			if err != nil {
@@ -261,7 +261,8 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 	if ProposalCalled != nil {
 		// run proposal executor
 		log.Debug("proposal called", "ID", ProposalCalled.ID, "name", ProposalCalled.Name, "tx", tx.HexHash())
-		ns, err := ProposalExecute(ProposalCalled, &tx, h.GetStateForProposal())
+
+		ns, err := ProposalExecute(ProposalCalled, &tx, h.GetStateForProposal(), oracle)
 		if err != nil {
 			log.Error("execute proposal failed", "ID", ProposalCalled.ID, "name", ProposalCalled.Name, "tx", tx.HexHash(), "err", err)
 			return err
@@ -278,7 +279,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction) (err error) {
 			}
 
 			log.Debug("execute proposal", "ID", proposal.ID, "name", proposal.Name, "tx", tx.HexHash())
-			ns, err := ProposalExecute(proposal, &tx, h.GetStateForProposal())
+			ns, err := ProposalExecute(proposal, &tx, h.GetStateForProposal(), oracle)
 			if err != nil {
 				log.Error("execute proposal failed", "ID", proposal.ID, "name", proposal.Name, "tx", tx.HexHash(), "err", err)
 				continue

@@ -32,7 +32,6 @@ const (
 	TxActionPropose = "propose"
 	TxActionCall    = "call"
 
-	//TxActionPropose  = "vote"
 	TxActionSwap = "swap"
 )
 

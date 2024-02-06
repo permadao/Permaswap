@@ -29,7 +29,7 @@ func NewExecutor(source string) (executor *schema.Executor, err error) {
 	if err != nil {
 		return nil, err
 	}
-	execute := v.Interface().(func(*schema.Transaction, *schema.StateForProposal, string, string) (*schema.StateForProposal, string, string, error))
+	execute := v.Interface().(func(*schema.Transaction, *schema.StateForProposal, *schema.Oracle, string, string) (*schema.StateForProposal, string, string, error))
 	return &schema.Executor{Execute: execute, RunnedTimes: 0, LocalState: ""}, nil
 }
 
@@ -48,7 +48,7 @@ func NewProposal(name string, start, end, runTimes int64, source, initData strin
 	return proposal
 }
 
-func ProposalExecute(proposal *schema.Proposal, tx *schema.Transaction, state *schema.StateForProposal) (*schema.StateForProposal, error) {
+func ProposalExecute(proposal *schema.Proposal, tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle) (*schema.StateForProposal, error) {
 
 	txCopied := &schema.Transaction{}
 	if err := DeepCopyTx(tx, txCopied); err != nil {
@@ -59,7 +59,7 @@ func ProposalExecute(proposal *schema.Proposal, tx *schema.Transaction, state *s
 	proposal.Executor.RunnedTimes++
 
 	// todo: if panic need recover
-	stateNew, localStateNew, localStateHashNew, err := proposal.Executor.Execute(txCopied, state, proposal.Executor.LocalState, proposal.InitData)
+	stateNew, localStateNew, localStateHashNew, err := proposal.Executor.Execute(txCopied, state, oracle, proposal.Executor.LocalState, proposal.InitData)
 	if err != nil {
 		return state, err
 	}

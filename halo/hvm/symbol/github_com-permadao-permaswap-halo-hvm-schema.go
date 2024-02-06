@@ -15,6 +15,7 @@ func init() {
 		"CopyRouterState":         reflect.ValueOf(schema.CopyRouterState),
 		"CopyToken":               reflect.ValueOf(schema.CopyToken),
 		"ErrInsufficientStake":    reflect.ValueOf(&schema.ErrInsufficientStake).Elem(),
+		"ErrInvalidAccountType":   reflect.ValueOf(&schema.ErrInvalidAccountType).Elem(),
 		"ErrInvalidAmount":        reflect.ValueOf(&schema.ErrInvalidAmount).Elem(),
 		"ErrInvalidFee":           reflect.ValueOf(&schema.ErrInvalidFee).Elem(),
 		"ErrInvalidFeeRecipient":  reflect.ValueOf(&schema.ErrInvalidFeeRecipient).Elem(),
@@ -53,8 +54,8 @@ func init() {
 		"TxVersionV1":             reflect.ValueOf(constant.MakeFromLiteral("\"v1\"", token.STRING, 0)),
 
 		// type definitions
-		"EverToken":        reflect.ValueOf((*schema.EverToken)(nil)),
 		"Executor":         reflect.ValueOf((*schema.Executor)(nil)),
+		"Oracle":           reflect.ValueOf((*schema.Oracle)(nil)),
 		"Pool":             reflect.ValueOf((*schema.Pool)(nil)),
 		"Proposal":         reflect.ValueOf((*schema.Proposal)(nil)),
 		"RouterState":      reflect.ValueOf((*schema.RouterState)(nil)),
