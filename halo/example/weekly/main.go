@@ -25,11 +25,11 @@ type InitData struct {
 	Pays []Pay  `json:"pays"`
 }
 
-func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, error) {
+func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {
 	var toPay InitData
 
 	if err := json.Unmarshal([]byte(initData), &toPay); err != nil {
-		return state, localState, ErrProposalInvalidInitData
+		return state, localState, "", ErrProposalInvalidInitData
 	}
 
 	from := toPay.From
@@ -38,7 +38,7 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 	for _, pay := range toPay.Pays {
 		amount, ok := new(big.Int).SetString(pay.Amount, 10)
 		if !ok {
-			return state, localState, ErrProposalInvalidAmount
+			return state, localState, "", ErrProposalInvalidAmount
 		}
 		feeRecipient := state.FeeRecipient
 		dryRun := false
@@ -46,8 +46,8 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		//todo: check if pay.to is valid address
 		err := state.Token.TransferToStake(from, pay.To, amount, pay.StakePool, now, feeRecipient, big.NewInt(0), dryRun)
 		if err != nil {
-			return state, localState, err
+			return state, localState, "", err
 		}
 	}
-	return state, localState, nil
+	return state, localState, "", nil
 }

@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-
-import json, time, sys
+import json, argparse, time, sys
 import requests
 from decimal import Decimal
-from optparse import OptionParser 
-from colorama import Fore, Style
 import everpay
+from colorama import Fore, Style
 from transaction import Transaction
 
 def get_singer(fn):
@@ -15,65 +12,101 @@ def get_singer(fn):
         return everpay.ETHSigner(open(fn).read().strip())
     else:
         return everpay.ARSigner(fn)
-    
+
 halo_decimals = 18
 
-parser = OptionParser()  
-parser.add_option('-r', '--router',  dest='router', default='http://127.0.0.1:8080',
-                  help='router to submit tx')
-parser.add_option('-w', '--wallet',  dest='wallet', 
-                  help='eth/ar wallet file')
+parser = argparse.ArgumentParser(description='A halo cmd client')
+parser.add_argument('-w', '--wallet', type=str, dest='wallet', help='wallet file contain eth/ar private key')
+parser.add_argument('-r', '--router', type=str, dest='router', help='halo router url to submit tx')
 
-parser.add_option('-c', '--action', dest='action',  
-                  help='tx action: transfer, stake, unstake, join, leave, propose, call')
-parser.add_option('-t', '--to',  dest='to',
-                  help='receiver')
-parser.add_option('-a', '--amount',  dest='amount', 
-                  help='amount to transfer or stake')
-parser.add_option('-p', '--pool',  dest='pool', 
-                  help='pool to stake or unstake')
+subparsers = parser.add_subparsers(dest='action', help='halo action help')
 
-(options, args) = parser.parse_args()  
+parser_transfer = subparsers.add_parser('transfer', help='transfer halo')
+parser_transfer.add_argument('-t', '--to', type=str, dest='to', help='Who to transfer to')
+parser_transfer.add_argument('-a', '--amount', type=str, dest='amount', help='amount to transfer')
 
-signer = get_singer(options.wallet)
+parser_unstake = subparsers.add_parser('unstake', help='unstake halo')
+parser_unstake.add_argument('-p', '--pool', type=str, dest='pool', help='which pool to unstake')
+parser_unstake.add_argument('-a', '--amount', type=str, dest='amount', help='amount to unstake')
 
-info = requests.get(options.router + '/info').json()
+parser_stake = subparsers.add_parser('stake', help='stake halo')
+parser_stake.add_argument('-p', '--pool', type=str, dest='pool', help='which pool to stake')
+parser_stake.add_argument('-a', '--amount', type=str, dest='amount', help='amount to stake')
+
+parser_propose = subparsers.add_parser('propose', help='propose')
+parser_propose.add_argument('-n', '--name', type=str, dest='name', help='proposal name')
+parser_propose.add_argument('-c', '--code', type=str, dest='code', help='source code file of proposal')
+parser_propose.add_argument('-d', '--data', type=str, dest='data', help='initial data file of proposal')
+parser_propose.add_argument('-t', '--times', type=int, dest='times', help='run times of proposal')
+parser_propose.add_argument('-s', '--start', type=int, dest='start', help='start times of proposal')
+parser_propose.add_argument('-e', '--end', type=int, dest='end', help='end times of proposal')
+# todo: TxActionsSupported
+
+args = parser.parse_args()
+
+signer = get_singer(args.wallet)
+info = requests.get(args.router + '/info').json()
 dapp = info['dapp']
 chain_id = info['chainID']
 fee_recipient = info['feeRecipient']
-submit_url = options.router + '/submit'
+submit_url = args.router + '/submit'
 
-if options.action == 'transfer':
-    if not options.to or not options.amount:
+if args.action == 'transfer':
+    if not args.to or not args.amount:
         print(Fore.RED + 'invalid transfer options' + Style.RESET_ALL)
         sys.exit(1)
     
-    amount = str(Decimal(options.amount) * 10**halo_decimals)
+    amount = str(int(Decimal(args.amount) * 10**halo_decimals))
     params = {
-        'to': options.to,
+        'to': args.to,
         'amount': amount,
     }
 
-elif options.action == 'unstake' or options.action == 'stake':
-    if not options.pool or not options.amount:
+elif args.action == 'unstake' or args.action == 'stake':
+    if not args.pool or not args.amount:
         print(Fore.RED + 'invalid unstake/stake options' + Style.RESET_ALL)
         sys.exit(1)
 
-    amount = str(Decimal(options.amount) * 10**halo_decimals)
+    amount = str(int(Decimal(args.amount) * 10**halo_decimals))
     params = {
-        'stakePool': options.pool,
+        'stakePool': args.pool,
         'amount': amount,
     }
-    
-else:
-    print(Fore.RED + 'invalid action' + Style.RESET_ALL)
-    sys.exit(1)
 
+elif args.action == 'propose':
+    if not args.name or not args.code:
+        print(Fore.RED + 'invalid propose options' + Style.RESET_ALL)
+        sys.exit(1)
+    
+    if not args.times and not args.start:
+        print(Fore.RED + 'invalid propose options' + Style.RESET_ALL)
+        sys.exit(1)
+
+    code = open(args.code).read()
+    initData = ''
+    if args.data:
+        initData = open(args.data).read()
+
+    params = {
+        'name':	args.name,
+        'source': code,
+        'start': args.start,
+        'end': args.end,
+        'initData': initData,
+        #'onlyAcceptedTxActions': ['call'],
+    }
+    if args.times:
+        params['runTimes'] = args.times
+    else:
+        params['start'] = args.start
+        params['end'] = args.end
+else:
+    parser.print_help()
 
 tx = Transaction(
     dapp = dapp,
     chain_id = chain_id,
-    action = options.action,
+    action = args.action,
     from_ = signer.address,
     fee = '0',
     fee_recipient= fee_recipient,
@@ -82,5 +115,5 @@ tx = Transaction(
     params= json.dumps(params)
 )
 tx.sign(signer)
-result = tx.post(options.router + '/submit')
+result = tx.post(submit_url)
 print('sumbit tx return:', result.content)

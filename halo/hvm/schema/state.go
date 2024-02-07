@@ -152,8 +152,10 @@ func (s *State) UpdateState(ns *StateForProposal) {
 	s.ChainID = ns.ChainID
 	s.Govern = ns.Govern
 	s.FeeRecipient = ns.FeeRecipient
-	s.RouterMinStake = ns.RouterMinStake
 	s.Routers = ns.Routers
 	s.RouterStates = ns.RouterStates
+	s.RouterMinStake = ns.RouterMinStake
 	s.Token = ns.Token
+	s.StakePools = ns.StakePools
+	s.OnlyUnStakePools = ns.OnlyUnStakePools
 }
