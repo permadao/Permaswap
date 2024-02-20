@@ -26,13 +26,15 @@ parser_transfer.add_argument('-t', '--to', type=str, dest='to', help='Who to tra
 parser_transfer.add_argument('-a', '--amount', type=str, dest='amount', help='amount to transfer')
 parser_transfer.add_argument('-r', '--raw_amount', action='store_true', dest='raw', help='raw amount to transfer, not multiply 10^decimals')
 
-parser_unstake = subparsers.add_parser('unstake', help='unstake halo')
-parser_unstake.add_argument('-p', '--pool', type=str, dest='pool', help='which pool to unstake')
-parser_unstake.add_argument('-a', '--amount', type=str, dest='amount', help='amount to unstake')
-
 parser_stake = subparsers.add_parser('stake', help='stake halo')
 parser_stake.add_argument('-p', '--pool', type=str, dest='pool', help='which pool to stake')
 parser_stake.add_argument('-a', '--amount', type=str, dest='amount', help='amount to stake')
+parser_stake.add_argument('-r', '--raw_amount', action='store_true', dest='raw', help='raw amount to unstake, not multiply 10^decimals')
+
+parser_unstake = subparsers.add_parser('unstake', help='unstake halo')
+parser_unstake.add_argument('-p', '--pool', type=str, dest='pool', help='which pool to unstake')
+parser_unstake.add_argument('-a', '--amount', type=str, dest='amount', help='amount to unstake')
+parser_unstake.add_argument('-r', '--raw_amount', action='store_true', dest='raw', help='raw amount to stake, not multiply 10^decimals')
 
 parser_propose = subparsers.add_parser('propose', help='propose')
 parser_propose.add_argument('-n', '--name', type=str, dest='name', help='proposal name')
@@ -70,7 +72,10 @@ elif args.action == 'unstake' or args.action == 'stake':
         print(Fore.RED + 'invalid unstake/stake options' + Style.RESET_ALL)
         sys.exit(1)
 
-    amount = str(int(Decimal(args.amount) * 10**halo_decimals))
+    if args.raw:
+        amount = args.amount
+    else:
+        amount = str(int(Decimal(args.amount) * 10**halo_decimals))
     params = {
         'stakePool': args.pool,
         'amount': amount,
