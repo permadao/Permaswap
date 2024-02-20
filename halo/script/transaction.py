@@ -45,7 +45,7 @@ class Transaction:
             'sig': self.sig}
 
     def sign(self, signer):
-        sig = signer.sign(str(self))
+        sig = signer.sign_bundle(str(self))
         self.sig = sig
         return sig
     
