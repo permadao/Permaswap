@@ -24,6 +24,7 @@ subparsers = parser.add_subparsers(dest='action', help='halo action help')
 parser_transfer = subparsers.add_parser('transfer', help='transfer halo')
 parser_transfer.add_argument('-t', '--to', type=str, dest='to', help='Who to transfer to')
 parser_transfer.add_argument('-a', '--amount', type=str, dest='amount', help='amount to transfer')
+parser_transfer.add_argument('-r', '--raw_amount', action='store_true', dest='raw', help='raw amount to transfer, not multiply 10^decimals')
 
 parser_unstake = subparsers.add_parser('unstake', help='unstake halo')
 parser_unstake.add_argument('-p', '--pool', type=str, dest='pool', help='which pool to unstake')
@@ -55,8 +56,10 @@ if args.action == 'transfer':
     if not args.to or not args.amount:
         print(Fore.RED + 'invalid transfer options' + Style.RESET_ALL)
         sys.exit(1)
-    
-    amount = str(int(Decimal(args.amount) * 10**halo_decimals))
+    if args.raw:
+        amount = args.amount
+    else:
+        amount = str(int(Decimal(args.amount) * 10**halo_decimals))
     params = {
         'to': args.to,
         'amount': amount,
