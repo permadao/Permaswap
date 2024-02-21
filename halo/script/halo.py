@@ -36,14 +36,19 @@ parser_unstake.add_argument('-p', '--pool', type=str, dest='pool', help='which p
 parser_unstake.add_argument('-a', '--amount', type=str, dest='amount', help='amount to unstake')
 parser_unstake.add_argument('-r', '--raw_amount', action='store_true', dest='raw', help='raw amount to stake, not multiply 10^decimals')
 
-parser_propose = subparsers.add_parser('propose', help='propose')
+parser_propose = subparsers.add_parser('propose', help='propose a proposal')
 parser_propose.add_argument('-n', '--name', type=str, dest='name', help='proposal name')
 parser_propose.add_argument('-c', '--code', type=str, dest='code', help='source code file of proposal')
 parser_propose.add_argument('-d', '--data', type=str, dest='data', help='initial data file of proposal')
 parser_propose.add_argument('-t', '--times', type=int, dest='times', help='run times of proposal')
 parser_propose.add_argument('-s', '--start', type=int, dest='start', help='start times of proposal')
 parser_propose.add_argument('-e', '--end', type=int, dest='end', help='end times of proposal')
-# todo: TxActionsSupported
+parser_propose.add_argument('-a', '--accept_actions', dest='actions', nargs='+', help='proposal accept actions, default is all action')
+
+parser_call = subparsers.add_parser('call', help='call a proposal')
+parser_call.add_argument('-i', '--proposal', type=str, dest='proposal', help='proposal id')
+parser_call.add_argument('-f', '--function', type=str, dest='function', help='proposal function to call')
+parser_call.add_argument('-p', '--params', type=str, dest='params', help='call params')
 
 args = parser.parse_args()
 
@@ -101,13 +106,28 @@ elif args.action == 'propose':
         'start': args.start,
         'end': args.end,
         'initData': initData,
-        #'onlyAcceptedTxActions': ['call'],
     }
+    
+    if args.actions:
+        params['onlyAcceptedTxActions'] = args.actions
+
     if args.times:
         params['runTimes'] = args.times
     else:
         params['start'] = args.start
         params['end'] = args.end
+    
+    # todo calculate proposal id, then print it
+elif args.action == 'call':
+    if not args.proposal or not args.function:
+        print(Fore.RED + 'invalid call options' + Style.RESET_ALL)
+        sys.exit(1)
+    params = {
+        'proposalID': args.proposal,
+        'function': args.function,
+    }
+    if args.params:
+        params['params'] = args.params
 else:
     parser.print_help()
 
