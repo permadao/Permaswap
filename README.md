@@ -23,7 +23,9 @@ cd cmd/router
 cp run_example.sh run.sh
 ```
 
-Fill in your MySQL DSN / ECC private key/ Genesis tx in run.sh
+Fill in your MySQL DSN / ECC private key / Genesis tx in run.sh
+
+ECC private key is a ethereum account private key, which is used to sign router's tx posted to everpay
 
 ```
 source run.sh
