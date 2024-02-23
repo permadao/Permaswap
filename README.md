@@ -16,7 +16,7 @@ Run as **Router** or **LP**.
 
 You also could just run **HALO Node** , which fetch halo txs and calculate current state.
 
-ECC private key is a ethereum account private key. 
+EVM private key is a ethereum account private key. 
 When you run a Router, it is used to sign router tx which is posted to everpay / arweave.
 When your run a HALO Node, it is not used, just filled a test account private key
 
@@ -27,7 +27,7 @@ cd cmd/router
 cp run_example.sh run.sh
 ```
 
-Fill in your MySQL DSN / ECC private key / Genesis tx in run.sh
+Fill in your MySQL DSN / EVM private key / Genesis tx in run.sh
 
 ```
 source run.sh
@@ -44,7 +44,7 @@ cd cmd/halo
 cp run_example.sh run.sh
 ```
 
-Fill in your MySQL DSN / ECC private key/ Genesis tx in run.sh
+Fill in your MySQL DSN / EVM private key/ Genesis tx in run.sh
 
 
 
