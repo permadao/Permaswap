@@ -7,6 +7,24 @@ import (
 	"github.com/permadao/permaswap/router/schema"
 )
 
+type Config struct {
+	Name         string
+	Logo         string
+	Desc         string
+	Domain       string
+	Ip           string
+	Pk           string
+	Mysql        string
+	ChainId      string `toml:"chain_id"`
+	EverpayApi   string `toml:"everpay_api"`
+	NftWhitelist bool   `toml:"nft_whitelist"`
+	NftApi       string `toml:"nft_api"`
+
+	FeeRatio     string `toml:"fee_ratio"`
+	FeeRecipient string `toml:"fee_recipient"`
+	Pools        []*coreSchema.Pool
+}
+
 const (
 	PermaswapClosed = false
 

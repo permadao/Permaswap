@@ -40,9 +40,9 @@ var MinAmountInsForPriceQuery = map[string]string{
 }
 
 type Pool struct {
-	TokenXTag string         `json:"tokenXTag"`
-	TokenYTag string         `json:"tokenYTag"`
-	FeeRatio  *apd.Decimal   `json:"feeRatio"`
+	TokenXTag string         `json:"tokenXTag" toml:"x"`
+	TokenYTag string         `json:"tokenYTag" toml:"y"`
+	FeeRatio  *apd.Decimal   `json:"feeRatio" toml:"fee_ratio"`
 	Lps       map[string]*Lp `json:"-"`
 }
 
