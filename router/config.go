@@ -7,6 +7,12 @@ import (
 	"github.com/permadao/permaswap/router/schema"
 )
 
+type Pool struct {
+	X   string
+	Y   string
+	Fee string
+}
+
 type Config struct {
 	Name         string
 	Logo         string
@@ -22,7 +28,7 @@ type Config struct {
 
 	FeeRatio     string `toml:"fee_ratio"`
 	FeeRecipient string `toml:"fee_recipient"`
-	Pools        []*coreSchema.Pool
+	Pools        []Pool
 }
 
 const (
