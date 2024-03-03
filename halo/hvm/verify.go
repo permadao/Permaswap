@@ -144,8 +144,8 @@ func TxJoinParamsVerify(txParams string) (routerState *schema.RouterState, err e
 		log.Error("invalid params of join tx to unmarshal", "params", txParams, "err", err)
 		return nil, schema.ErrInvalidTxParams
 	}
-	if len(routerState.Info) > 250 {
-		log.Error("info of join tx is too long", "info", routerState.Info)
+	if len(routerState.Desc) > 250 {
+		log.Error("info of join tx is too long", "description", routerState.Desc)
 		return nil, schema.ErrInvalidTxParams
 	}
 	if routerState.Name == "" || len(routerState.Name) > 20 {

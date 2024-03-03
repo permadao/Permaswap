@@ -3,13 +3,6 @@ package router
 import "github.com/permadao/permaswap/halo/hvm/schema"
 
 func (r *Router) Join() {
-	httpEndpoint := ""
-	wsEndpoint := ""
-	if r.domain != "" {
-		httpEndpoint = "https://" + r.domain
-		wsEndpoint = "wss://" + r.domain
-	}
-
 	pools := map[string]*schema.Pool{}
 	for _, pool := range r.core.Pools {
 		pools[pool.ID()] = &schema.Pool{
@@ -22,8 +15,10 @@ func (r *Router) Join() {
 	routerState := schema.RouterState{
 		Router:           r.sdk.AccId,
 		Name:             r.name,
-		HTTPEndpoint:     httpEndpoint,
-		WSEndpoint:       wsEndpoint,
+		Logo:             r.logo,
+		Desc:             r.desc,
+		Domain:           r.domain,
+		Ip:               r.ip,
 		SwapFeeRecipient: r.core.FeeRecepient,
 		SwapFeeRatio:     r.core.FeeRatio.String(),
 		Pools:            pools,

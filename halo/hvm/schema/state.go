@@ -12,14 +12,14 @@ type RouterState struct {
 	Router           string           `json:"router"` // router address
 	Name             string           `json:"name"`
 	Logo             string           `json:"logo"` // logo url
-	HTTPEndpoint     string           `json:"httpEndpoint"`
-	WSEndpoint       string           `json:"wsEndpoint"`
+	Desc             string           `json:"desc"` // description
+	Domain           string           `json:"domain"`
+	Ip               string           `json:"ip"`
 	SwapFeeRatio     string           `json:"swapFeeRatio"`
 	SwapFeeRecipient string           `json:"swapFeeRecipient"`
 	Pools            map[string]*Pool `json:"pools"`      // pool id -> pool
 	LpMinStake       string           `json:"lpMinStake"` // minum amount lp stake
 	LpPenalty        string           `json:"lpPenalty"`  // penalty for lp evil
-	Info             string           `json:"info"`       // router info
 }
 
 type State struct {
@@ -75,13 +75,13 @@ func CopyRouterState(dst, src *RouterState) {
 	dst.Router = src.Router
 	dst.Name = src.Name
 	dst.Logo = src.Logo
-	dst.HTTPEndpoint = src.HTTPEndpoint
-	dst.WSEndpoint = src.WSEndpoint
+	dst.Desc = src.Desc
+	dst.Domain = src.Domain
+	dst.Ip = src.Ip
 	dst.SwapFeeRatio = src.SwapFeeRatio
 	dst.SwapFeeRecipient = src.SwapFeeRecipient
 	dst.LpMinStake = src.LpMinStake
 	dst.LpPenalty = src.LpPenalty
-	dst.Info = src.Info
 
 	dst.Pools = make(map[string]*Pool)
 	for _, p := range src.Pools {
