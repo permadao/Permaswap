@@ -85,7 +85,7 @@ func (r *Router) getInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, schema.InfoRes{
 		ChainID:       r.chainID,
 		RouterAddress: routerAddress,
-		NFTWhiteList:  SetNFTWhiteList(r.chainID),
+		NFTWhiteList:  r.NFTWhiteList,
 		TokenList:     tokenList,
 		PoolList:      r.core.Pools,
 		LpClientInfo:  r.LpClientInfo,

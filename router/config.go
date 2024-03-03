@@ -3,7 +3,6 @@ package router
 import (
 	"fmt"
 
-	coreSchema "github.com/permadao/permaswap/core/schema"
 	"github.com/permadao/permaswap/router/schema"
 )
 
@@ -20,8 +19,9 @@ type Config struct {
 	Domain       string
 	Ip           string
 	Pk           string
+	Port         string
 	Mysql        string
-	ChainId      string `toml:"chain_id"`
+	ChainId      int64  `toml:"chain_id"`
 	EverpayApi   string `toml:"everpay_api"`
 	NftWhitelist bool   `toml:"nft_whitelist"`
 	NftApi       string `toml:"nft_api"`
@@ -73,29 +73,4 @@ func GetLpClientInfoConf(chainID int64) (lpClients map[string]*schema.LpClientIn
 	}
 
 	return
-}
-
-func GetFeeConf(chainID int64) (feeRecepient, feeRatio string) {
-	switch chainID {
-	case 1:
-		feeRecepient = "0xc6B2FcadaEC9FdC6dA8e416B682d4915F85986f6"
-		feeRatio = coreSchema.Fee0005
-	case 5:
-		feeRecepient = "0x41fCE022647de219EBd6dc361016Ff0D63aB3f5D"
-		feeRatio = coreSchema.Fee0005
-	default:
-		panic(fmt.Sprintf("can not get fee conf, invalid chainID: %d\n", chainID))
-	}
-	return
-}
-
-func SetNFTWhiteList(chainID int64) bool {
-	switch chainID {
-	case 1:
-		return false
-	case 5:
-		return false
-	default:
-		panic(fmt.Sprintf("SetNFTWhiteList, invalid chainID: %d\n", chainID))
-	}
 }

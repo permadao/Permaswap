@@ -11,7 +11,10 @@ import (
 )
 
 func TestSDKConnect(t *testing.T) {
-	testRouter := router.New("", "", 5, nil, "", "", "", nil, false)
+	config := &router.Config{
+		ChainId: 5,
+	}
+	testRouter := router.New(config, nil, nil, nil, false)
 	testRouter.Run(testPort, "")
 	defer testRouter.Close()
 

@@ -24,8 +24,12 @@ import (
 var log = logger.New("router")
 
 type Router struct {
-	name    string
-	domain  string
+	name   string
+	logo   string
+	desc   string
+	domain string
+	ip     string
+
 	engine  *gin.Engine
 	server  *http.Server
 	chainID int64
@@ -82,6 +86,7 @@ type Router struct {
 	closed chan struct{}
 	dryRun bool
 
+	NFTWhiteList   bool
 	NFTInfo        *NFTInfo
 	NFTOwnerChange chan *NFTOwnerChangeMsg
 
@@ -96,39 +101,50 @@ type Router struct {
 	haloSDK    *halosdk.SDK
 }
 
-func New(name, domain string, chainID int64, everSDK *sdk.SDK, nftApiURL, dsn string,
-	halo_genesis_tx string, haloSDK *halosdk.SDK, dryRun bool) *Router {
+func New(config *Config, haloConfig *halo.Config, everSDK *sdk.SDK, haloSDK *halosdk.SDK, dryRun bool) *Router {
 	w := &WDB{}
 	if !dryRun {
-		w = NewWDB(dsn)
+		w = NewWDB(config.Mysql)
 	}
 	tokens, err := everSDK.Cli.GetTokens()
 	if err != nil {
 		log.Error("failed to get tokens info", "err", err)
 	}
 
-	feeRecepient, feeRatio := GetFeeConf(chainID)
-	c := core.New(core.InitPools(chainID), feeRecepient, feeRatio)
+	pools := map[string]*coreSchema.Pool{}
+	for _, pool := range config.Pools {
+		cp, err := core.NewPool(pool.X, pool.Y, pool.Fee)
+		if err != nil {
+			log.Error("Invalid pool", "X", pool.X, "Y", pool.Y, "Fee", pool.Fee, "err", err)
+			continue
+		}
+		pools[cp.ID()] = cp
+	}
+	c := core.New(pools, config.FeeRecipient, config.FeeRatio)
 
 	var nftInfo *NFTInfo
 	var nftOwnerChange chan *NFTOwnerChangeMsg
-	if nftApiURL != "" {
+	if config.NftApi != "" {
 		nftOwnerChange = make(chan *NFTOwnerChangeMsg, 200)
-		nftInfo = NewNFTInfo(nftApiURL, []string{}, nftOwnerChange)
+		nftInfo = NewNFTInfo(config.NftApi, []string{}, nftOwnerChange)
 	}
 
-	stats := NewStats(tokens, core.InitPools(chainID), w)
+	stats := NewStats(tokens, pools, w)
 
 	var haloServer *halo.Halo
-	if halo_genesis_tx != "" {
-		haloServer = halo.New(halo_genesis_tx, dsn, everSDK)
+	if haloConfig.Genesis != "" {
+		haloServer = halo.New(haloConfig.Genesis, config.Mysql, everSDK)
 	}
 
 	return &Router{
-		name:    name,
-		domain:  domain,
+		name:   config.Name,
+		logo:   config.Logo,
+		desc:   config.Desc,
+		domain: config.Domain,
+		ip:     config.Ip,
+
 		engine:  gin.Default(),
-		chainID: chainID,
+		chainID: config.ChainId,
 		tokens:  tokens,
 		core:    c,
 		sdk:     everSDK,
@@ -171,12 +187,13 @@ func New(name, domain string, chainID int64, everSDK *sdk.SDK, nftApiURL, dsn st
 		closed: make(chan struct{}),
 		dryRun: dryRun,
 
+		NFTWhiteList:   config.NftWhitelist,
 		NFTInfo:        nftInfo,
 		NFTOwnerChange: nftOwnerChange,
 
 		Stats:        stats,
 		scheduler:    gocron.NewScheduler(time.UTC),
-		LpClientInfo: GetLpClientInfoConf(chainID),
+		LpClientInfo: GetLpClientInfoConf(config.ChainId),
 
 		penalty: NewPenalty(),
 

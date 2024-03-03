@@ -5,7 +5,10 @@ const (
 )
 
 func testGenRouter() *Router {
-	router := New("", "", 5, nil, "", "", "", nil, false)
+	config := &Config{
+		ChainId: 5,
+	}
+	router := New(config, nil, nil, nil, false)
 	router.Run(testPort, "")
 	return router
 }

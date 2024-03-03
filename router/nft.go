@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/permadao/permaswap/router/schema"
 	"github.com/everVision/everpay-kits/utils"
+	"github.com/permadao/permaswap/router/schema"
 	"gopkg.in/h2non/gentleman.v2"
 )
 
@@ -251,7 +251,7 @@ func (n *NFTInfo) updateNFTInfo() error {
 }
 
 func (r *Router) CheckNFTOrNot() bool {
-	if !SetNFTWhiteList(r.chainID) {
+	if !r.NFTWhiteList {
 		return false
 	}
 	if r.NFTInfo == nil || len(r.NFTInfo.GetOwners()) == 0 {

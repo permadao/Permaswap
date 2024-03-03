@@ -3,6 +3,7 @@ module github.com/permadao/permaswap
 go 1.20
 
 require (
+	github.com/BurntSushi/toml v1.3.2
 	github.com/cockroachdb/apd/v3 v3.2.1
 	github.com/ethereum/go-ethereum v1.13.10
 	github.com/everFinance/goar v1.5.7
