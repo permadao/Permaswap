@@ -55,7 +55,7 @@ func run(c *cli.Context) error {
 	}
 
 	var haloSDK *halosdk.SDK
-	if c.String("halo_url") != "" {
+	if config.Halo.DefaulHaloNodeUrl != "" {
 		haloSDK, err = halosdk.New(signer, config.Halo.DefaulHaloNodeUrl)
 		if err != nil {
 			panic(err)
@@ -63,7 +63,7 @@ func run(c *cli.Context) error {
 	}
 
 	r := router.New(&config.Router, &config.Halo, everSDK, haloSDK, false)
-	if c.String(config.Halo.Genesis) != "" {
+	if config.Halo.Genesis != "" {
 		r.Run(config.Router.Port, config.Halo.UrlPrefix)
 	} else {
 		r.Run(config.Router.Port, "")
