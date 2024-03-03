@@ -30,6 +30,7 @@ func (h *Halo) RegisterRouter(router *gin.Engine, group string) {
 	}
 	g := router.Group(group)
 	g.GET("/info", h.info)
+	g.GET("/txs", h.txs)
 	g.GET("/token", h.tokenInfo)
 	g.POST("/submit", h.submit)
 }
@@ -44,13 +45,38 @@ func (h *Halo) info(c *gin.Context) {
 			log.Error("unmarshal state failed", "err", err)
 		}
 	}
-
+	state.Executed = []string{}
+	state.Validity = map[string]bool{}
 	res := &schema.InfoRes{
 		State:             state,
 		GenesisTxEverHash: h.GenesisTxEverHash,
 		HaloAddr:          h.HaloAddr,
 	}
 
+	c.JSON(http.StatusOK, res)
+}
+
+func (h *Halo) txs(c *gin.Context) {
+	h.stateChan <- struct{}{}
+	stateRes := <-h.stateResChan
+
+	state := hvmSchema.State{}
+	if stateRes != "" {
+		if err := json.Unmarshal([]byte(stateRes), &state); err != nil {
+			log.Error("unmarshal txs state failed", "err", err)
+		}
+	}
+	executed := []schema.TxWithValidity{}
+	for _, tx := range state.Executed {
+		executed = append(executed, schema.TxWithValidity{
+			Tx:       tx,
+			Validity: state.Validity[tx],
+		})
+
+	}
+	res := &schema.TxRes{
+		Executed: executed,
+	}
 	c.JSON(http.StatusOK, res)
 }
 
