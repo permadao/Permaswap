@@ -1,0 +1,35 @@
+[router]
+name = ""
+#logo image url
+logo = ""
+desc = ""
+domain = ""
+ip = ""
+# evm private key used to sign transactions
+pk = ""
+port = ":8080"
+# mysql dsn. eg: user:password@tcp(127.0.0.1:3306)/db_name?charset=utf8mb4&parseTime=True&loc=Local
+mysql = ""
+chain_id = 1
+everpay_api = "https://api.everpay.io"
+
+nft_whitlelist = false
+nft_api = ""
+
+# router swap fee ratio
+fee_ratio = "0.001"
+# router swap fee recipient: evm or arweave address
+fee_recipient = ""
+# pool: x token tag , y, fee
+# token tag get from https://api.everpay.io/info
+# x < y
+pools = [
+	{x = "arweave,ethereum-ar-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,0x4fadc7a98f2dc96510e42dd1a74141eeae0c1543", y = "ethereum-usdc-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", fee="0.003"},
+]
+
+[halo]
+# halo genesis tx
+genesis = "0x91be83007f1b642d328ab01a7759f38b75f89a61079a998c0fce834fc36f7b91"
+url_prefix = "/halo"
+# default halo node url
+default_halo_node_url = "https://node.halonode.com"
