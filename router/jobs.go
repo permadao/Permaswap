@@ -28,6 +28,9 @@ func (r *Router) saveLpsSnapshot() {
 }
 
 func (r *Router) loadNFTWhiteList() {
+	if r.NFTInfo == nil {
+		return
+	}
 	wls, err := r.wdb.LoadNFTWhiteList()
 	if err == nil && len(wls) > 0 {
 		addrs := []string{}
