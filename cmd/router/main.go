@@ -47,7 +47,7 @@ func run(c *cli.Context) error {
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 
 	var signer interface{}
-	if config.Router.KeyFile == "eth" {
+	if config.Router.AccountType == "eth" {
 		pk, err := os.ReadFile(config.Router.KeyFile)
 		if err != nil {
 			panic(err)
