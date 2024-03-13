@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/BurntSushi/toml"
+	"github.com/everFinance/goar"
 	"github.com/everFinance/goether"
 	"github.com/everVision/everpay-kits/sdk"
 	"github.com/permadao/permaswap/halo"
@@ -45,10 +46,24 @@ func run(c *cli.Context) error {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 
-	signer, err := goether.NewSigner(config.Router.Pk)
-	if err != nil {
-		panic(err)
+	var signer interface{}
+	if config.Router.KeyFile == "eth" {
+		pk, err := os.ReadFile(config.Router.KeyFile)
+		if err != nil {
+			panic(err)
+		}
+		signer, err = goether.NewSigner(string(pk))
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		var err error
+		signer, err = goar.NewSignerFromPath(config.Router.KeyFile)
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	everSDK, err := sdk.New(signer, config.Router.EverpayApi)
 	if err != nil {
 		panic(err)

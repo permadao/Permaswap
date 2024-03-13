@@ -5,8 +5,11 @@ logo = ""
 desc = ""
 domain = ""
 ip = ""
-# evm private key used to sign transactions
-pk = ""
+
+# evm private key or ar account used to sign transactions and stake halo test token
+account_type = "eth"
+key_file = "pk.txt"
+
 port = ":8080"
 # mysql dsn. eg: user:password@tcp(127.0.0.1:3306)/db_name?charset=utf8mb4&parseTime=True&loc=Local
 mysql = ""

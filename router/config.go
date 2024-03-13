@@ -18,7 +18,8 @@ type Config struct {
 	Desc         string
 	Domain       string
 	Ip           string
-	Pk           string
+	AccountType  string
+	KeyFile      string
 	Port         string
 	Mysql        string
 	ChainId      int64  `toml:"chain_id"`
