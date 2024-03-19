@@ -8,4 +8,5 @@ var (
 	ErrInvalidGenesisBalance     = errors.New("err_invalid_genesis_balance")
 	ErrInvalidGenesisStake       = errors.New("err_invalid_genesis_stake")
 	ErrInvalidSubmitTxNonce      = errors.New("err_invalid_submit_tx_nonce")
+	ErrMissParams                = errors.New("err_miss_params")
 )

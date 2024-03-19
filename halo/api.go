@@ -8,6 +8,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	hvmSchema "github.com/permadao/permaswap/halo/hvm/schema"
+	tokSchema "github.com/permadao/permaswap/halo/token/schema"
+
 	"github.com/permadao/permaswap/halo/schema"
 
 	"github.com/gin-gonic/gin"
@@ -31,6 +33,8 @@ func (h *Halo) RegisterRouter(router *gin.Engine, group string) {
 	g := router.Group(group)
 	g.GET("/info", h.info)
 	g.GET("/txs", h.txs)
+	g.GET("/tx/:hash", h.getTx)
+	g.GET("/balance/:accid", h.getBalance)
 	g.GET("/token", h.tokenInfo)
 	g.POST("/submit", h.submit)
 }
@@ -54,6 +58,21 @@ func (h *Halo) info(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+func (h *Halo) getTx(c *gin.Context) {
+	if c.Param("hash") == "" {
+		c.JSON(http.StatusBadRequest, schema.ErrMissParams.Error())
+		return
+	}
+
+	tx, err := h.wdb.GetTx(c.Param("hash"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, tx)
 }
 
 func (h *Halo) txs(c *gin.Context) {
@@ -84,6 +103,30 @@ func (h *Halo) tokenInfo(c *gin.Context) {
 	h.tokenChan <- struct{}{}
 	tokenRes := <-h.tokenResChan
 	c.JSON(http.StatusOK, tokenRes)
+}
+
+func (h *Halo) getBalance(c *gin.Context) {
+	if c.Param("accid") == "" {
+		c.JSON(http.StatusBadRequest, schema.ErrMissParams.Error())
+		return
+	}
+
+	h.tokenChan <- struct{}{}
+	tokenRes := <-h.tokenResChan
+
+	balance := "0"
+	if b, ok := tokenRes.Balances[c.Param("accid")]; ok {
+		balance = b
+	}
+	stakes := map[string][]tokSchema.StakeInfo{}
+	if s, ok := tokenRes.Stakes[c.Param("accid")]; ok {
+		stakes = s
+	}
+
+	c.JSON(http.StatusOK, schema.BalanceRes{
+		Balance: balance,
+		Stakes:  stakes,
+	})
 }
 
 func (h *Halo) submit(c *gin.Context) {

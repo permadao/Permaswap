@@ -17,7 +17,7 @@ halo_decimals = 18
 
 parser = argparse.ArgumentParser(description='A halo cmd client')
 parser.add_argument('-w', '--wallet', type=str, dest='wallet', help='wallet file contain eth/ar private key')
-parser.add_argument('-r', '--router', type=str, dest='router', help='halo router url to submit tx')
+parser.add_argument('-r', '--router', type=str, dest='router', help='halo router url to submit tx', default="https://router.permaswap.network/halo")
 
 subparsers = parser.add_subparsers(dest='action', help='halo action help')
 
@@ -43,7 +43,7 @@ parser_propose.add_argument('-d', '--data', type=str, dest='data', help='initial
 parser_propose.add_argument('-t', '--times', type=int, dest='times', help='run times of proposal')
 parser_propose.add_argument('-s', '--start', type=int, dest='start', help='start times of proposal')
 parser_propose.add_argument('-e', '--end', type=int, dest='end', help='end times of proposal')
-parser_propose.add_argument('-a', '--accept_actions', dest='actions', nargs='+', help='proposal accept actions, default is all action')
+parser_propose.add_argument('-a', '--accept_actions', dest='actions', nargs='+', help='proposal accept actions, default is all action', default=None)
 
 parser_call = subparsers.add_parser('call', help='call a proposal')
 parser_call.add_argument('-i', '--proposal', type=str, dest='proposal', help='proposal id')

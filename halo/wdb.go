@@ -29,3 +29,8 @@ func (w *WDB) CreateHaloTx(haloTx *schema.HaloTransaction, tx *gorm.DB) error {
 	}
 	return tx.Create(&haloTx).Error
 }
+
+func (w *WDB) GetTx(hash string) (haloTx *schema.HaloTransaction, err error) {
+	err = w.db.Where("ever_hash = ?", hash).Or("halo_hash = ?", hash).First(&haloTx).Error
+	return
+}
