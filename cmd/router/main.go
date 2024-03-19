@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/BurntSushi/toml"
@@ -52,7 +53,7 @@ func run(c *cli.Context) error {
 		if err != nil {
 			panic(err)
 		}
-		signer, err = goether.NewSigner(string(pk))
+		signer, err = goether.NewSigner(strings.TrimSpace(string(pk)))
 		if err != nil {
 			panic(err)
 		}
