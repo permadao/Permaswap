@@ -8,7 +8,7 @@ require (
 	github.com/ethereum/go-ethereum v1.13.10
 	github.com/everFinance/goar v1.5.7
 	github.com/everFinance/goether v1.1.9
-	github.com/everVision/everpay-kits v0.0.7
+	github.com/everVision/everpay-kits v0.0.8
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.37.0
