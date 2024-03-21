@@ -1,6 +1,8 @@
 module github.com/permadao/permaswap
 
-go 1.20
+go 1.21.1
+
+toolchain go1.21.5
 
 require (
 	github.com/BurntSushi/toml v1.3.2
