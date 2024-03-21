@@ -3,6 +3,7 @@ package sdk
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	hvmSchema "github.com/permadao/permaswap/halo/hvm/schema"
 	"github.com/permadao/permaswap/halo/schema"
@@ -61,4 +62,22 @@ func (c *Client) SubmitTx(tx hvmSchema.Transaction) (everhash string, err error)
 		return
 	}
 	return submitRes.EverHash, nil
+}
+
+func (c *Client) GetTx(haloHash string) (haloTx *schema.HaloTransaction, err error) {
+	req := c.cli.Request()
+	req.AddPath(fmt.Sprintf("/tx/%s", haloHash))
+	resp, err := req.Send()
+	if err != nil {
+		return
+	}
+	if !resp.Ok {
+		fmt.Println("err resp:", resp.String())
+		return nil, errors.New("resp ok is false")
+	}
+
+	defer resp.Close()
+	fmt.Println("err resp:", resp.String())
+	err = json.Unmarshal(resp.Bytes(), &haloTx)
+	return
 }
