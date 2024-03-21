@@ -9,7 +9,7 @@ import (
 var testClient *Client
 
 func init() {
-	testClient = NewClient("https://node.halonode.com/")
+	testClient = NewClient("https://router-dev.permaswap.network/halo")
 }
 
 func TestGetInfo(t *testing.T) {
