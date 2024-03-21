@@ -19,7 +19,7 @@ import (
 )
 
 var LpName = "lp-golang"
-var LpVersion = "v0.5.1"
+var LpVersion = "v0.5.2"
 
 var log = logger.New("lp")
 
