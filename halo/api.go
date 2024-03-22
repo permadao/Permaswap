@@ -34,6 +34,7 @@ func (h *Halo) RegisterRouter(router *gin.Engine, group string) {
 	g.GET("/info", h.info)
 	g.GET("/txs", h.txs)
 	g.GET("/tx/:hash", h.getTx)
+	g.GET("/proposal/:id", h.getProposal)
 	g.GET("/balance/:accid", h.getBalance)
 	g.GET("/token", h.tokenInfo)
 	g.POST("/submit", h.submit)
@@ -47,17 +48,51 @@ func (h *Halo) info(c *gin.Context) {
 	if stateRes != "" {
 		if err := json.Unmarshal([]byte(stateRes), &state); err != nil {
 			log.Error("unmarshal state failed", "err", err)
+			c.JSON(http.StatusInternalServerError, err.Error())
+			return
 		}
 	}
 	state.Executed = []string{}
 	state.Validity = map[string]bool{}
+
+	pids := []string{}
+	for _, p := range state.Proposals {
+		pids = append(pids, p.ID)
+	}
+	state.Proposals = []*hvmSchema.Proposal{}
+
 	res := &schema.InfoRes{
 		State:             state,
+		ProposalIds:       pids,
 		GenesisTxEverHash: h.GenesisTxEverHash,
 		HaloAddr:          h.HaloAddr,
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+func (h *Halo) getProposal(c *gin.Context) {
+	if c.Param("id") == "" {
+		c.JSON(http.StatusBadRequest, schema.ErrMissParams.Error())
+		return
+	}
+	h.stateChan <- struct{}{}
+	stateRes := <-h.stateResChan
+
+	state := hvmSchema.State{}
+	if stateRes != "" {
+		if err := json.Unmarshal([]byte(stateRes), &state); err != nil {
+			log.Error("unmarshal state failed", "err", err)
+			c.JSON(http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+	for _, p := range state.Proposals {
+		if p.ID == c.Param("id") {
+			c.JSON(http.StatusOK, p)
+			return
+		}
+	}
 }
 
 func (h *Halo) getTx(c *gin.Context) {
@@ -162,5 +197,7 @@ func (h *Halo) submit(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, schema.SubmitRes{EverHash: everTx.HexHash()})
+	c.JSON(http.StatusOK, schema.SubmitRes{
+		EverHash: everTx.HexHash(),
+		HaloHash: tx.HexHash()})
 }

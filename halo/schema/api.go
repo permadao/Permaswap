@@ -7,8 +7,9 @@ import (
 
 type InfoRes struct {
 	hvmSchema.State
-	GenesisTxEverHash string `json:"genesisTxEverHash"`
-	HaloAddr          string `json:"haloAddr"`
+	ProposalIds       []string `json:"proposalIds"`
+	GenesisTxEverHash string   `json:"genesisTxEverHash"`
+	HaloAddr          string   `json:"haloAddr"`
 }
 
 type BalanceRes struct {
@@ -26,4 +27,5 @@ type TxRes struct {
 
 type SubmitRes struct {
 	EverHash string `json:"everHash"`
+	HaloHash string `json:"haloHash"`
 }
