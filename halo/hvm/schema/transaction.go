@@ -103,6 +103,8 @@ type TxUnstakeParams struct {
 
 type TxProposeParams struct {
 	Name                  string   `json:"name"`
+	Category              string   `json:"category"`
+	Description           string   `json:"description"`
 	Start                 int64    `json:"start"`
 	End                   int64    `json:"end"`
 	RunTimes              int64    `json:"runTimes"`
