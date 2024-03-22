@@ -15,6 +15,7 @@ var (
 	ErrInvalidProposer      = errors.New("err_invalid_proposer")
 	ErrInvalidProposal      = errors.New("err_invalid_proposal")
 	ErrTxExecuted           = errors.New("err_tx_executed")
+	ErrTxPanic              = errors.New("err_tx_panic")
 	ErrInvalidStakePool     = errors.New("err_invalid_stake_pool")
 	ErrInvalidRouterAddress = errors.New("err_invalid_router_address")
 	ErrInvalidRouterName    = errors.New("err_invalid_router_name")

@@ -48,7 +48,13 @@ func NewProposal(name string, start, end, runTimes int64, source, initData strin
 	return proposal
 }
 
-func ProposalExecute(proposal *schema.Proposal, tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle) (*schema.StateForProposal, error) {
+func ProposalExecute(proposal *schema.Proposal, tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle) (ns *schema.StateForProposal, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error("ProposalExecute panic", "err", r, "proposal", proposal.ID, "tx", tx.EverHash)
+			err = schema.ErrTxPanic
+		}
+	}()
 
 	txCopied := &schema.Transaction{}
 	if err := DeepCopyTx(tx, txCopied); err != nil {
@@ -58,7 +64,6 @@ func ProposalExecute(proposal *schema.Proposal, tx *schema.Transaction, state *s
 
 	proposal.Executor.RunnedTimes++
 
-	// todo: if panic need recover
 	stateNew, localStateNew, localStateHashNew, err := proposal.Executor.Execute(txCopied, state, oracle, proposal.Executor.LocalState, proposal.InitData)
 	if err != nil {
 		return state, err
