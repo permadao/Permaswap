@@ -2,13 +2,12 @@ package proposal
 
 import (
 	"math/big"
-	"strconv"
 	"testing"
-	"time"
 
 	"github.com/permadao/permaswap/halo/hvm/schema"
 	"github.com/permadao/permaswap/halo/token"
 	tokSchema "github.com/permadao/permaswap/halo/token/schema"
+	"github.com/stretchr/testify/assert"
 )
 
 func testGenToken() *token.Token {
@@ -58,7 +57,7 @@ func testGenToken() *token.Token {
 			"basic": {
 				tokSchema.Stake{
 					StakedAt: 1,
-					Amount:   big.NewInt(10),
+					Amount:   big.NewInt(50),
 				},
 			},
 		},
@@ -87,30 +86,72 @@ func testGenState() *schema.StateForProposal {
 	}
 }
 
-func testGenTx() *schema.Transaction {
-	nonce := time.Now().UnixNano() / 1000000
-	return &schema.Transaction{
-		From:   "0x1",
-		Action: "call",
-		Nonce:  strconv.FormatInt(nonce, 10),
-		Params: `{"function": "Vote", "params": "{\"infavor\": false}"}`,
-	}
-}
-
 func testGenInitData() string {
 	return `{"stakePool": "dev", 
 			"voteStartAt": 1711357200, 
-			"threshold": "10000000000000000000", 
+			"threshold": "100", 
 			"minVoteDuration": 900, 
 			"confirmDuration": 900}`
 }
 
-func TestExecute(t *testing.T) {
-	tx := testGenTx()
+func TestExecute1(t *testing.T) {
 	state := testGenState()
 	initData := testGenInitData()
-	stateNew, localState, _, err := Execute(tx, state, nil, "", initData)
-	t.Log(stateNew)
-	t.Log(localState)
-	t.Log(err)
+
+	tx1 := &schema.Transaction{
+		//nonce := time.Now().UnixNano() / 1000000
+		From:   "0x1",
+		Action: "call",
+		Nonce:  "1711357210000",
+		Params: `{"function": "Vote", "params": "{\"infavor\": false}"}`,
+	}
+	state2, localState2, _, err := Execute(tx1, state, nil, "", initData)
+	t.Log("state2", state2)
+	t.Log("localState2", localState2, "\n")
+	assert.NoError(t, err)
+
+	tx2 := &schema.Transaction{
+		From:   "0x2",
+		Action: "call",
+		Nonce:  "1711367310000",
+		Params: `{"function": "Vote", "params": "{\"infavor\": true}"}`,
+	}
+	state3, localState3, _, err := Execute(tx2, state2, nil, localState2, initData)
+	t.Log("state3", state3)
+	t.Log("localState3", localState3, "\n")
+	assert.NoError(t, err)
+
+	tx3 := &schema.Transaction{
+		From:   "0x3",
+		Action: "call",
+		Nonce:  "1711358200000",
+		Params: `{"function": "Vote", "params": "{\"infavor\": true}"}`,
+	}
+	state4, localState4, _, err := Execute(tx3, state3, nil, localState3, initData)
+	t.Log("state4", state4)
+	t.Log("localState4", localState4, "\n")
+	assert.NoError(t, err)
+
+	tx4 := &schema.Transaction{
+		From:   "0x3",
+		Action: "call",
+		Nonce:  "1711359300000",
+		Params: `{"function": "Vote", "params": "{\"infavor\": true}"}`,
+	}
+	state5, localState5, _, err := Execute(tx4, state4, nil, localState4, initData)
+	t.Log("state5", state5)
+	t.Log("localState5", localState5)
+	t.Log("err", err, "\n")
+
+	tx5 := &schema.Transaction{
+		From:   "0x3",
+		Action: "call",
+		Nonce:  "1711359300000",
+		Params: `{"function": "Execute"}`,
+	}
+	state6, localState6, _, err := Execute(tx5, state5, nil, localState5, initData)
+	t.Log("state6", state6)
+	t.Log("localState6", localState6, "\n")
+	t.Log("err", err)
+
 }

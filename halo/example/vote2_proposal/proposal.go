@@ -123,6 +123,8 @@ func NewVoting(init InitData) Voting {
 }
 
 func (v *Voting) TotalVoted() (amount, weight *big.Int) {
+	amount = big.NewInt(0)
+	weight = big.NewInt(0)
 	for _, voted := range v.Voted {
 		amount = new(big.Int).Add(amount, voted.Amount)
 		weight = new(big.Int).Add(weight, voted.Weight)
@@ -132,6 +134,9 @@ func (v *Voting) TotalVoted() (amount, weight *big.Int) {
 
 func (v *Voting) Infavored() bool {
 	_, total := v.TotalVoted()
+	if total == nil {
+		return false
+	}
 	totalf := new(big.Float).SetInt(total)
 	m, _ := new(big.Float).SetString(v.Majority)
 	infavorf := new(big.Float).SetInt(v.Infavor)
@@ -141,7 +146,7 @@ func (v *Voting) Infavored() bool {
 // vote <-> confirm -> execute -> end
 // vote -> end
 func (v *Voting) UpdatePeriod(now int64) string {
-	total, _ := v.TotalVoted()
+	_, total := v.TotalVoted()
 	if v.Period == PeriodVote {
 		threshold, _ := new(big.Int).SetString(v.Threshold, 10)
 		if total != nil && total.Cmp(threshold) == 1 && v.Infavored() && now > v.CurrentVoteStartAt+v.MinVoteDuration {
@@ -205,12 +210,11 @@ func voteWeight(stakePool string, voteWeight int64, stakes map[string][]tokSchem
 }
 
 // Specific proposal details
-func _execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {
-	return state, localState, "", nil
+func _execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, error) {
+	return state, nil
 }
 
 func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {
-
 	if tx.Action != schema.TxActionCall {
 		return state, localState, "", ErrPropsalInvalidTxAction
 	}
@@ -290,6 +294,8 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 			voting.Against = new(big.Int).Add(voting.Against, voteWeight)
 		}
 
+		voting.UpdatePeriod(now)
+
 		localStateNew, err := json.Marshal(voting)
 		if err != nil {
 			return state, localState, "", err
@@ -306,14 +312,15 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		}
 
 		voting.Executed = true
+		voting.UpdatePeriod(now)
 		localStateNew, err := json.Marshal(voting)
 		if err != nil {
 			return state, localState, "", err
 		}
 
 		// execute
-		state, localStateNew2, _, err := _execute(tx, state, oracle, string(localStateNew), initData)
-		return state, localStateNew2, "", err
+		stateNew, err := _execute(tx, state, oracle, string(localStateNew), initData)
+		return stateNew, string(localStateNew), "", err
 
 	default:
 		return state, localState, "", ErrPropsalInvalidFunction
