@@ -144,7 +144,7 @@ func (v *Voting) UpdatePeriod(now int64) string {
 	total, _ := v.TotalVoted()
 	if v.Period == PeriodVote {
 		threshold, _ := new(big.Int).SetString(v.Threshold, 10)
-		if total.Cmp(threshold) == 1 && v.Infavored() && now > v.CurrentVoteStartAt+v.MinVoteDuration {
+		if total != nil && total.Cmp(threshold) == 1 && v.Infavored() && now > v.CurrentVoteStartAt+v.MinVoteDuration {
 			v.CurrentConfirmStartAt = now
 			v.Period = PeriodConfirm
 		}

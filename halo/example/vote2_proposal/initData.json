@@ -1,7 +1,7 @@
 {
- "stakePool": "dev",
- "voteDeadline": 1701997560,
- "threshold": 10000000000000000000,
- "minVoteDuration": 900,
- "confirmDuration": 900
+    "stakePool": "dev",
+    "voteStartAt": 1711121700,
+    "threshold": "10000000000000000000",
+    "minVoteDuration": 900,
+    "confirmDuration": 900
 }
