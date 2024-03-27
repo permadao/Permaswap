@@ -69,13 +69,17 @@ func (h *Halo) processHaloTx(txResp everSchema.TxResponse) {
 			log.Error("invalid halo tx", "err", err)
 			return
 		}
+		tx.EverHash = txResp.EverHash
+		tx.Router = txResp.From
 	case schema.EverTxActionBundle:
-		tx.Action = hvmSchema.TxActionSwap
-		tx.Params = txResp.Data
+		tx_, err := BundleTxVerify(txResp)
+		if err != nil {
+			log.Error("invalid bundle tx", "err", err)
+			return
+		}
+		tx = *tx_
 	}
 
-	tx.EverHash = txResp.EverHash
-	tx.Router = txResp.From
 	// submit to hvm
 	var err error
 	error := ""

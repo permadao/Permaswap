@@ -2,6 +2,7 @@ package schema
 
 import (
 	"crypto/sha256"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -119,8 +120,33 @@ type TxCallParams struct {
 	Params     string `json:"params"`
 }
 
+type SwapOrderItem struct {
+	PoolID    string   `json:"poolID"`
+	User      string   `json:"user"`
+	Lp        string   `json:"lp"`
+	TokenIn   string   `json:"tokenIn"`
+	AmountIn  *big.Int `json:"amountIn"`
+	TokenOut  string   `json:"tokenOut"`
+	AmountOut *big.Int `json:"amountOut"`
+}
+
+type SwapOrder struct {
+	User         string           `json:"user"`
+	TimeStamp    int64            `json:"timeStamp"`
+	Items        []*SwapOrderItem `json:"items"`
+	FeeRecipient string           `json:"feeRecipient"`
+	Fee          string           `json:"fee"`
+	Index        int64            `json:"index"` // index of the error orderItem
+	Err          string           `json:"err"`
+}
+
+func (o *SwapOrder) Success() bool {
+	return o.Err == ""
+}
+
 type TxSwapParams struct {
-	// TODO
+	InternalStatus string `json:"internalStatus"`
+	TxData         string `json:"txData"`
 }
 
 type TxApply struct {

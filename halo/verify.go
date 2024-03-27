@@ -145,3 +145,32 @@ func verifyNonce(nonce string) error {
 	}
 	return nil
 }
+
+func BundleTxVerify(txResp everSchema.TxResponse) (tx *hvmSchema.Transaction, err error) {
+	tx = &hvmSchema.Transaction{}
+	if txResp.Action != schema.EverTxActionBundle {
+		return nil, schema.ErrInvalidBundleTxAction
+	}
+	tx.EverHash = txResp.EverHash
+	tx.Router = txResp.From
+	tx.Nonce = strconv.FormatInt(txResp.Nonce, 10)
+	tx.Action = hvmSchema.TxActionSwap
+
+	bundleData := everSchema.BundleData{}
+	if err := json.Unmarshal([]byte(txResp.Data), &bundleData); err != nil {
+		log.Error("unmarshal bundle tx data failed", "err", err)
+		return nil, err
+	}
+
+	params := hvmSchema.TxSwapParams{
+		InternalStatus: txResp.InternalStatus,
+		TxData:         txResp.Data,
+	}
+	params_, err := json.Marshal(params)
+	if err != nil {
+		log.Error("marshal swap tx params failed", "err", err)
+	}
+	tx.Params = string(params_)
+
+	return tx, nil
+}

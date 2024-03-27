@@ -134,6 +134,11 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 		if err != nil {
 			return err
 		}
+	} else {
+		// verify swap tx's router
+		if !h.verifyFromRouter(tx.Router) {
+			return schema.ErrInvalidFromRouter
+		}
 	}
 
 	switch tx.Action {
@@ -246,7 +251,24 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 		}
 
 	case schema.TxActionSwap:
-		// todo
+		routerState, ok := h.RouterStates[tx.Router]
+		if !ok {
+			log.Error("router not found", "router", tx.Router)
+			return err
+		}
+		pools := routerState.Pools
+		if len(pools) == 0 {
+			log.Error("router have no pools", "router", tx.Router)
+			return err
+		}
+		order, err := TxSwapParamsVerify(tx.Params, tx.Nonce, pools, oracle.EverTokens)
+		if err != nil {
+			log.Error("swap params verify failed", "err", err)
+			return err
+		}
+		oracle.Order = *order
+		//log.Info("swap tx", "everhash", tx.EverHash, "order error", order.Err, "order items", len(order.Items))
+
 	default:
 		return schema.ErrInvalidTxAction
 	}

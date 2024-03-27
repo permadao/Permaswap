@@ -2,6 +2,7 @@ package hvm
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"math/big"
 
@@ -233,4 +234,98 @@ func TxCallParamsVerify(txParams string) (proposalID, function, callParams strin
 		return "", "", "", schema.ErrInvalidTxParams
 	}
 	return proposalID, function, params.Params, nil
+}
+
+func findPool(x, y string, pools map[string]*schema.Pool) (pool *schema.Pool) {
+	for _, pool := range pools {
+		if pool.TokenXTag == x && pool.TokenYTag == y {
+			return pool
+		}
+		if pool.TokenYTag == x && pool.TokenXTag == y {
+			return pool
+		}
+	}
+	return
+}
+
+func TxSwapParamsVerify(txParams string, nonce string, pools map[string]*schema.Pool, tokens map[string]everSchema.TokenInfo) (order *schema.SwapOrder, Err error) {
+	params := schema.TxSwapParams{}
+	if err := json.Unmarshal([]byte(txParams), &params); err != nil {
+		log.Error("invalid params of swap tx to unmarshal", "params", txParams, "err", err)
+		return nil, schema.ErrInvalidTxParams
+	}
+	internalStatus := everSchema.InternalStatus{}
+	if err := json.Unmarshal([]byte(params.InternalStatus), &internalStatus); err != nil {
+		log.Error("failed to unmarshal swap tx internalStatus", "internalStatus", params.InternalStatus, "err", err)
+		return nil, schema.ErrInvalidTxParams
+	}
+	bundleData := everSchema.BundleData{}
+	if err := json.Unmarshal([]byte(params.TxData), &bundleData); err != nil {
+		return nil, schema.ErrInvalidTxParams
+	}
+	nonce_, err := strconv.ParseInt(nonce, 10, 64)
+	if err != nil {
+		return nil, schema.ErrInvalidNonce
+	}
+	bundle := bundleData.Bundle.Bundle
+	user := bundle.Items[0].From
+	order = &schema.SwapOrder{
+		User:      user,
+		TimeStamp: nonce_ / 1000,
+		Index:     -1,
+	}
+	if internalStatus.Status != everSchema.InternalStatusSuccess {
+		order.Index = int64(internalStatus.Index / 2)
+		order.Err = internalStatus.InternalErr.Msg
+	}
+
+	first := everSchema.BundleItem{}
+	second := everSchema.BundleItem{}
+	for i, item := range bundle.Items {
+		if i%2 == 0 {
+			first = item
+			continue
+		}
+		second = item
+
+		pool := findPool(first.Tag, second.Tag, pools)
+		if pool == nil {
+			log.Error("failed to find pool", "x", first.Tag, "y", second.Tag)
+			return nil, schema.ErrNoPoolFound
+		}
+		if _, ok := tokens[first.Tag]; !ok {
+			log.Error("failed to find first token", "tokenTag", first.Tag)
+			return nil, schema.ErrNoTokenFound
+		}
+		if _, ok := tokens[second.Tag]; !ok {
+			log.Error("failed to find second token", "tokenTag", second.Tag)
+			return nil, schema.ErrNoTokenFound
+		}
+
+		lp := first.To
+		tokenIn := first.Tag
+		amountIn, _ := new(big.Int).SetString(first.Amount, 10)
+		tokenOut := second.Tag
+		amountOut, _ := new(big.Int).SetString(second.Amount, 10)
+		if lp == user {
+			lp = second.To
+			tokenIn = second.Tag
+			amountIn, _ = new(big.Int).SetString(second.Amount, 10)
+			tokenOut = first.Tag
+			amountOut, _ = new(big.Int).SetString(first.Amount, 10)
+		}
+		order.Items = append(order.Items, &schema.SwapOrderItem{
+			PoolID:    pool.ID(),
+			User:      user,
+			Lp:        lp,
+			TokenIn:   tokenIn,
+			AmountIn:  amountIn,
+			TokenOut:  tokenOut,
+			AmountOut: amountOut,
+		})
+	}
+	feePath := bundle.Items[len(bundle.Items)-1]
+	order.FeeRecipient = feePath.To
+	order.Fee = feePath.Amount
+	return order, nil
 }

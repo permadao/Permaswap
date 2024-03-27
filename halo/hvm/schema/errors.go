@@ -24,4 +24,6 @@ var (
 	ErrNotARouter           = errors.New("err_not_a_router")
 	ErrNoProposalFound      = errors.New("err_no_proposal_found")
 	ErrInvalidAccountType   = errors.New("err_invalid_account_type")
+	ErrNoPoolFound          = errors.New("err_no_pool_found")
+	ErrNoTokenFound         = errors.New("err_no_token_found")
 )
