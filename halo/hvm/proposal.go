@@ -42,7 +42,9 @@ func NewProposal(name string, start, end, runTimes int64, source, initData strin
 		Source:                source,
 		InitData:              initData,
 		OnlyAcceptedTxActions: onlyAcceptedTxActions,
-		Executor:              executor,
+
+		Executor:    executor,
+		ExecutedTxs: map[string]string{},
 	}
 	proposal.ID = proposal.HexHash()
 	return proposal
