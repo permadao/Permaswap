@@ -94,8 +94,8 @@ func testGenInitData() string {
 			"confirmDuration": 900}`
 }
 
-func TestExecute1(t *testing.T) {
-	state := testGenState()
+func TestExecute(t *testing.T) {
+	state1 := testGenState()
 	initData := testGenInitData()
 
 	tx1 := &schema.Transaction{
@@ -105,7 +105,7 @@ func TestExecute1(t *testing.T) {
 		Nonce:  "1711357210000",
 		Params: `{"function": "Vote", "params": "{\"infavor\": false}"}`,
 	}
-	state2, localState2, _, err := Execute(tx1, state, nil, "", initData)
+	state2, localState2, _, err := Execute(tx1, state1, nil, "", initData)
 	t.Log("state2", state2)
 	t.Log("localState2", localState2, "\n")
 	assert.NoError(t, err)

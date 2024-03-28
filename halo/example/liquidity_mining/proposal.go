@@ -18,7 +18,7 @@ var (
 	ErrPropsalInvalidInitData    = errors.New("err_proposal_invalid_init_data")
 	ErrPropsalInvalidLocalState  = errors.New("err_proposal_invalid_local_state")
 	ErrPropsalInvalidTxAction    = errors.New("err_proposal_invalid_tx_action")
-	ErrPropsalNoSwapOrder        = errors.New("err_proposal_no_swap_order")
+	ErrPropsalInvalidSwapOrder   = errors.New("err_proposal_invalid_swap_order")
 	ErrPropsalMiningEnd          = errors.New("err_proposal_mining_end")
 	ErrPropsalInvalidNonce       = errors.New("err_proposal_invalid_nonce")
 	ErrorInvalidTimeElapsed      = errors.New("err_invalid_time_elapsed")
@@ -44,7 +44,11 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 	}
 
 	if tx.SwapOrder == nil {
-		return state, localState, "", ErrPropsalNoSwapOrder
+		return state, localState, "", ErrPropsalInvalidSwapOrder
+	}
+
+	if tx.SwapOrder.Err != "" {
+		return state, localState, "", ErrPropsalInvalidSwapOrder
 	}
 
 	var liquidity Liquidity
@@ -52,6 +56,8 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		if err := json.Unmarshal([]byte(initData), &liquidity); err != nil {
 			return state, localState, "", ErrPropsalInvalidInitData
 		}
+		liquidity.LastMining = liquidity.Start
+		liquidity.Mined = make(map[string]*big.Int)
 	} else {
 		if err := json.Unmarshal([]byte(localState), &liquidity); err != nil {
 			return state, localState, "", ErrPropsalInvalidLocalState
