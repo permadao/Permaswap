@@ -11,7 +11,6 @@ import (
 
 type Oracle struct {
 	EverTokens map[string]everSchema.TokenInfo
-	Order      SwapOrder
 }
 
 type Executor struct {

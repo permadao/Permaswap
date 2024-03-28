@@ -266,7 +266,9 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 			log.Error("swap params verify failed", "err", err)
 			return err
 		}
-		oracle.Order = *order
+
+		tx.SwapOrder = *order
+
 		//log.Info("swap tx", "everhash", tx.EverHash, "order error", order.Err, "order items", len(order.Items))
 
 	default:
