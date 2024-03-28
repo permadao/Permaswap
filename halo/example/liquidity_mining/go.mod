@@ -2,7 +2,7 @@ module github.com/permadao/permaswap/halo/proposal
 
 go 1.20
 
-require github.com/permadao/permaswap v0.0.3-0.20240328004319-d0cadcbe1e74
+require github.com/permadao/permaswap v0.0.3-0.20240328022516-12ca9dabb796
 
 require (
 	github.com/bits-and-blooms/bitset v1.10.0 // indirect

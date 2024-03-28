@@ -14,23 +14,6 @@ const (
 	POOL = "incentive"
 )
 
-type OrderItem struct {
-	PoolID    string
-	User      string
-	Lp        string
-	TokenIn   string
-	AmountIn  *big.Int
-	TokenOut  string
-	AmountOut *big.Int
-}
-
-type Order struct {
-	User      string
-	TimeStamp int64
-	Items     []*OrderItem
-	Fee       string
-}
-
 var (
 	ErrPropsalInvalidInitData    = errors.New("err_proposal_invalid_init_data")
 	ErrPropsalInvalidLocalState  = errors.New("err_proposal_invalid_local_state")
@@ -46,8 +29,8 @@ type Liquidity struct {
 	Name        string `json:"name"`
 	Router      string `json:"router"` // router address
 	Pool        string `json:"pool"`   // pool id
-	BaseToken   string `json:"base_token"`
-	TotalSupply string `json:"total_supply"`
+	BaseToken   string `json:"baseToken"`
+	TotalSupply string `json:"totalSupply"` // total supply for this liquidity mining
 	Start       int64  `json:"start"`
 	End         int64  `json:"end"`
 
@@ -80,7 +63,6 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 	nonce, err := strconv.ParseInt(tx.Nonce, 10, 64)
 	if err != nil {
 		return state, localState, "", ErrPropsalInvalidNonce
-
 	}
 	now := nonce / 1000
 	if now > liquidity.End {
@@ -101,26 +83,21 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		if item.PoolID != liquidity.Pool {
 			continue
 		}
-
+		if _, ok := lpToVolume[item.Lp]; !ok {
+			lpToVolume[item.Lp] = big.NewInt(0)
+		}
+		volume := item.AmountOut
 		if item.TokenIn == liquidity.BaseToken {
-			if _, ok := lpToVolume[item.Lp]; !ok {
-				lpToVolume[item.Lp] = big.NewInt(0)
-			}
-			lpToVolume[item.Lp].Add(lpToVolume[item.Lp], item.AmountIn)
-			totalVolume.Add(totalVolume, item.AmountIn)
+			volume = item.AmountIn
 		}
-		if item.TokenOut == liquidity.BaseToken {
-			if _, ok := lpToVolume[item.Lp]; !ok {
-				lpToVolume[item.Lp] = big.NewInt(0)
-			}
-			lpToVolume[item.Lp].Add(lpToVolume[item.Lp], item.AmountOut)
-			totalVolume.Add(totalVolume, item.AmountOut)
-		}
+		lpToVolume[item.Lp].Add(lpToVolume[item.Lp], volume)
+		totalVolume.Add(totalVolume, volume)
 	}
 
 	if totalVolume.Cmp(big.NewInt(0)) == 0 {
 		return state, localState, "", nil
 	}
+
 	liquidity.LastMining = now
 	lpToAmount := make(map[string]*big.Int)
 	timeElapsed_ := big.NewInt(timeElapsed)
@@ -134,8 +111,18 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		err := state.Token.Transfer(POOL, lp, amount, state.FeeRecipient, big.NewInt(0), false)
 		if err != nil {
 			log.Error("transfer failed", "lp", lp, "amount", "amount", "err", err)
+			continue
 		}
+		if _, ok := liquidity.Mined[lp]; !ok {
+			liquidity.Mined[lp] = big.NewInt(0)
+		}
+		liquidity.Mined[lp].Add(liquidity.Mined[lp], amount)
 	}
 
-	return state, localState, "", nil
+	localStateNew, err := json.Marshal(liquidity)
+	if err != nil {
+		return state, localState, "", err
+	}
+
+	return state, string(localStateNew), "", nil
 }
