@@ -31,7 +31,8 @@ type Proposal struct {
 	InitData              string   `json:"initData"`
 	OnlyAcceptedTxActions []string `json:"onlyAcceptedTxActions"`
 
-	Executor *Executor `json:"executor"`
+	ExecutedTxs map[string]string `json:"executedTxs"`
+	Executor    *Executor         `json:"executor"`
 }
 
 func (p *Proposal) String() string {

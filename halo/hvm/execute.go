@@ -306,8 +306,10 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 			ns, err := ProposalExecute(proposal, &tx, h.GetStateForProposal(), oracle)
 			if err != nil {
 				log.Error("execute proposal failed", "ID", proposal.ID, "name", proposal.Name, "tx", tx.HexHash(), "err", err)
+				proposal.ExecutedTxs[tx.EverHash] = err.Error()
 				continue
 			}
+			proposal.ExecutedTxs[tx.EverHash] = ""
 			h.UpdateState(ns)
 		}
 	}
@@ -329,5 +331,5 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 	h.Proposals = proposals
 
 	h.StateHash = h.Hash()
-	return
+	return nil
 }
