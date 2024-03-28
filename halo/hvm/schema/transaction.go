@@ -48,19 +48,19 @@ var TxActionsSupported = []string{
 }
 
 type Transaction struct {
-	Dapp         string    `json:"dapp"`
-	ChainID      string    `json:"chainID"`
-	EverHash     string    `json:"everHash"` // tx hash from everpay
-	Router       string    `json:"router"`   // tx from which router
-	Action       string    `json:"action"`
-	From         string    `json:"from"`
-	Fee          string    `json:"fee"`
-	FeeRecipient string    `json:"feeRecipient"`
-	Nonce        string    `json:"nonce"`
-	Version      string    `json:"version"`
-	Params       string    `json:"params"`
-	Sig          string    `json:"sig"`
-	SwapOrder    SwapOrder `json:"swapOrder" gorm:"-"` // swap order json string
+	Dapp         string     `json:"dapp"`
+	ChainID      string     `json:"chainID"`
+	EverHash     string     `json:"everHash"` // tx hash from everpay
+	Router       string     `json:"router"`   // tx from which router
+	Action       string     `json:"action"`
+	From         string     `json:"from"`
+	Fee          string     `json:"fee"`
+	FeeRecipient string     `json:"feeRecipient"`
+	Nonce        string     `json:"nonce"`
+	Version      string     `json:"version"`
+	Params       string     `json:"params"`
+	Sig          string     `json:"sig"`
+	SwapOrder    *SwapOrder `json:"swapOrder" gorm:"-"` // swap order json string
 }
 
 func (t *Transaction) String() string {

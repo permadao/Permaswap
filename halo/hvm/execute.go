@@ -267,7 +267,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 			return err
 		}
 
-		tx.SwapOrder = *order
+		tx.SwapOrder = order
 
 		//log.Info("swap tx", "everhash", tx.EverHash, "order error", order.Err, "order items", len(order.Items))
 

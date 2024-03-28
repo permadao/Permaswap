@@ -12,19 +12,24 @@ import (
 func init() {
 	Symbols["github.com/permadao/permaswap/halo/schema/schema"] = map[string]reflect.Value{
 		// function, constant and variable definitions
+		"ErrInvalidBundleTxAction":     reflect.ValueOf(&schema.ErrInvalidBundleTxAction).Elem(),
 		"ErrInvalidGenesisBalance":     reflect.ValueOf(&schema.ErrInvalidGenesisBalance).Elem(),
 		"ErrInvalidGenesisStake":       reflect.ValueOf(&schema.ErrInvalidGenesisStake).Elem(),
 		"ErrInvalidGenesisTotalSupply": reflect.ValueOf(&schema.ErrInvalidGenesisTotalSupply).Elem(),
 		"ErrInvalidGenesisTx":          reflect.ValueOf(&schema.ErrInvalidGenesisTx).Elem(),
 		"ErrInvalidSubmitTxNonce":      reflect.ValueOf(&schema.ErrInvalidSubmitTxNonce).Elem(),
+		"ErrMissParams":                reflect.ValueOf(&schema.ErrMissParams).Elem(),
 		"EverTxActionBundle":           reflect.ValueOf(constant.MakeFromLiteral("\"bundle\"", token.STRING, 0)),
 		"EverTxActionTransfer":         reflect.ValueOf(constant.MakeFromLiteral("\"transfer\"", token.STRING, 0)),
 
 		// type definitions
+		"BalanceRes":      reflect.ValueOf((*schema.BalanceRes)(nil)),
 		"GenesisTxData":   reflect.ValueOf((*schema.GenesisTxData)(nil)),
 		"HaloTransaction": reflect.ValueOf((*schema.HaloTransaction)(nil)),
 		"InfoRes":         reflect.ValueOf((*schema.InfoRes)(nil)),
 		"SubmitRes":       reflect.ValueOf((*schema.SubmitRes)(nil)),
 		"TxApply":         reflect.ValueOf((*schema.TxApply)(nil)),
+		"TxRes":           reflect.ValueOf((*schema.TxRes)(nil)),
+		"TxWithValidity":  reflect.ValueOf((*schema.TxWithValidity)(nil)),
 	}
 }
