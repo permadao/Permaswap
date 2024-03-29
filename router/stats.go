@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
+	everSchema "github.com/everVision/everpay-kits/schema"
 	"github.com/permadao/permaswap/core"
 	coreSchema "github.com/permadao/permaswap/core/schema"
 	"github.com/permadao/permaswap/router/schema"
-	everSchema "github.com/everVision/everpay-kits/schema"
 )
 
 type Stats struct {
@@ -261,7 +261,13 @@ func (s *Stats) updateTVL() (err error) {
 			t.Y += tvl.Y
 			t.USD += tvl.USD
 		} else {
-			poolidToTVL[lp.PoolID] = tvl
+			poolidToTVL[lp.PoolID] = &schema.TVL{
+				Timestamp: tvl.Timestamp,
+				PoolID:    tvl.PoolID,
+				X:         tvl.X,
+				Y:         tvl.Y,
+				USD:       tvl.USD,
+			}
 		}
 	}
 
