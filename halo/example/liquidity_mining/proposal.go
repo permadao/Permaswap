@@ -6,7 +6,6 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/permadao/permaswap/halo/hvm/schema"
 )
 
@@ -19,6 +18,7 @@ var (
 	ErrPropsalInvalidLocalState  = errors.New("err_proposal_invalid_local_state")
 	ErrPropsalInvalidTxAction    = errors.New("err_proposal_invalid_tx_action")
 	ErrPropsalInvalidSwapOrder   = errors.New("err_proposal_invalid_swap_order")
+	ErrPropsalMiningNotStart     = errors.New("err_proposal_mining_not_start")
 	ErrPropsalMiningEnd          = errors.New("err_proposal_mining_end")
 	ErrPropsalInvalidNonce       = errors.New("err_proposal_invalid_nonce")
 	ErrorInvalidTimeElapsed      = errors.New("err_invalid_time_elapsed")
@@ -34,8 +34,8 @@ type Liquidity struct {
 	Start       int64  `json:"start"`
 	End         int64  `json:"end"`
 
-	LastMining int64               `json:"last_mining"`
-	Mined      map[string]*big.Int `json:"mined"`
+	LastMining int64             `json:"last_mining"`
+	Mined      map[string]string `json:"mined"`
 }
 
 func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {
@@ -43,11 +43,7 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		return state, localState, "", ErrPropsalInvalidTxAction
 	}
 
-	if tx.SwapOrder == nil {
-		return state, localState, "", ErrPropsalInvalidSwapOrder
-	}
-
-	if tx.SwapOrder.Err != "" {
+	if tx.SwapOrder == nil || tx.SwapOrder.Err != "" {
 		return state, localState, "", ErrPropsalInvalidSwapOrder
 	}
 
@@ -57,7 +53,7 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 			return state, localState, "", ErrPropsalInvalidInitData
 		}
 		liquidity.LastMining = liquidity.Start
-		liquidity.Mined = make(map[string]*big.Int)
+		liquidity.Mined = make(map[string]string)
 	} else {
 		if err := json.Unmarshal([]byte(localState), &liquidity); err != nil {
 			return state, localState, "", ErrPropsalInvalidLocalState
@@ -71,6 +67,9 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		return state, localState, "", ErrPropsalInvalidNonce
 	}
 	now := nonce / 1000
+	if now < liquidity.Start {
+		return state, localState, "", ErrPropsalMiningNotStart
+	}
 	if now > liquidity.End {
 		now = liquidity.End
 	}
@@ -116,13 +115,13 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 	for lp, amount := range lpToAmount {
 		err := state.Token.Transfer(POOL, lp, amount, state.FeeRecipient, big.NewInt(0), false)
 		if err != nil {
-			log.Error("transfer failed", "lp", lp, "amount", "amount", "err", err)
 			continue
 		}
 		if _, ok := liquidity.Mined[lp]; !ok {
-			liquidity.Mined[lp] = big.NewInt(0)
+			liquidity.Mined[lp] = "0"
 		}
-		liquidity.Mined[lp].Add(liquidity.Mined[lp], amount)
+		mined, _ := new(big.Int).SetString(liquidity.Mined[lp], 10)
+		liquidity.Mined[lp] = new(big.Int).Add(mined, amount).String()
 	}
 
 	localStateNew, err := json.Marshal(liquidity)

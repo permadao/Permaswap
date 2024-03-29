@@ -116,4 +116,58 @@ func TestExecute(t *testing.T) {
 	t.Log("state2 token balance", state2.Token.Balances, "\n")
 	t.Log("localState2", localState2, "\n")
 	assert.NoError(t, err)
+
+	tx2 := &schema.Transaction{
+		Nonce:  "1105000",
+		Action: schema.TxActionSwap,
+		SwapOrder: &schema.SwapOrder{
+			Items: []*schema.SwapOrderItem{
+				{
+					PoolID:    "0xP2",
+					User:      "0xa",
+					Lp:        "0xL1",
+					TokenIn:   "usdt",
+					AmountIn:  big.NewInt(1000000000),
+					TokenOut:  "eth",
+					AmountOut: big.NewInt(100),
+				},
+				{
+					PoolID:    "0xP2",
+					User:      "0xa",
+					Lp:        "0xL3",
+					TokenIn:   "usdt",
+					AmountIn:  big.NewInt(2000000000),
+					TokenOut:  "eth",
+					AmountOut: big.NewInt(200),
+				},
+			},
+		},
+	}
+
+	state3, localState3, _, err := Execute(tx2, state2, oracle, localState2, initData)
+	t.Log("state3 token balance", state3.Token.Balances, "\n")
+	t.Log("localState3", localState3, "\n")
+	assert.NoError(t, err)
+
+	tx3 := &schema.Transaction{
+		Nonce:  "1115000",
+		Action: schema.TxActionSwap,
+		SwapOrder: &schema.SwapOrder{
+			Items: []*schema.SwapOrderItem{
+				{
+					PoolID:    "0xP1",
+					User:      "0xa",
+					Lp:        "0xL2",
+					TokenIn:   "usdt",
+					AmountIn:  big.NewInt(1000000000),
+					TokenOut:  "ar",
+					AmountOut: big.NewInt(1000),
+				},
+			},
+		},
+	}
+	state4, localState4, _, err := Execute(tx3, state3, oracle, localState3, initData)
+	t.Log("state3 token balance", state4.Token.Balances, "\n")
+	t.Log("localState3", localState4, "\n")
+	assert.NoError(t, err)
 }
