@@ -34,6 +34,8 @@ const (
 )
 
 type InitData struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
 	VoteStartAt int64  `json:"voteStartAt"`
 	StakePool   string `json:"stakePool"`
 
@@ -61,6 +63,8 @@ type Voted struct {
 
 // local status
 type Voting struct {
+	Name                  string `json:"name"`
+	Description           string `json:"description"`
 	Period                string `json:"period"`
 	CurrentVoteStartAt    int64  `json:"currentVoteStartAt"`
 	CurrentConfirmStartAt int64  `json:"currentConfirmStartAt"`
@@ -83,6 +87,8 @@ type Voting struct {
 
 func NewVoting(init InitData) Voting {
 	voting := Voting{
+		Name:                  init.Name,
+		Description:           init.Description,
 		Period:                PeriodVote,
 		CurrentVoteStartAt:    init.VoteStartAt,
 		CurrentConfirmStartAt: 0,
@@ -211,7 +217,10 @@ func voteWeight(stakePool string, voteWeight int64, stakes map[string][]tokSchem
 
 // Specific proposal details
 func _execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, error) {
-	return state, nil
+	amount, _ := new(big.Int).SetString("1000000000000000000000000", 10)
+	to := "0x61EbF673c200646236B2c53465bcA0699455d5FA"
+	err := state.Token.Transfer("ecosystem", to, amount, state.FeeRecipient, big.NewInt(0), false)
+	return state, err
 }
 
 func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {

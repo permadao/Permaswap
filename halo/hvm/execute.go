@@ -291,8 +291,10 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 		ns, err := ProposalExecute(ProposalCalled, &tx, h.GetStateForProposal(), oracle)
 		if err != nil {
 			log.Error("execute proposal failed", "ID", ProposalCalled.ID, "name", ProposalCalled.Name, "tx", tx.HexHash(), "err", err)
+			ProposalCalled.ExecutedTxs[tx.EverHash] = err.Error()
 			return err
 		}
+		ProposalCalled.ExecutedTxs[tx.EverHash] = ""
 		h.UpdateState(ns)
 	} else {
 		// run every proposal executor
