@@ -2,6 +2,7 @@ package hvm
 
 import (
 	"math/big"
+	"strconv"
 	"strings"
 
 	"github.com/permadao/permaswap/halo/account"
@@ -139,6 +140,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 		if !h.verifyFromRouter(tx.Router) {
 			return schema.ErrInvalidFromRouter
 		}
+		nonce, _ = strconv.ParseInt(tx.Nonce, 10, 64)
 	}
 
 	switch tx.Action {
@@ -276,7 +278,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 	}
 
 	// swap tx no need to update nonce
-	if acc != nil && nonce > 0 {
+	if acc != nil && nonce > 0 && tx.Action != schema.TxActionSwap {
 		acc.UpdateNonce(nonce)
 	}
 	h.LatestTxHash = tx.HexHash()
