@@ -235,7 +235,7 @@ func (c *Core) Query(msg routerSchema.UserMsgQuery) ([]schema.Path, error) {
 	for i, poolPath := range poolPaths {
 		sos_, amountOut_, err := PoolsSwap(poolPath, msg.TokenIn, msg.TokenOut, amountIn, c.AddressToLpIDs[addr])
 		if err != nil {
-			log.Warn("Failed to swap in one poolPaths", "path_index", i, "len(poolPaths)", len(poolPaths), "pooPath", poolPath,
+			log.Debug("Failed to swap in one poolPaths", "path_index", i, "len(poolPaths)", len(poolPaths), "pooPath", poolPath,
 				"tokenIn", msg.TokenIn, "tokenOut", msg.TokenOut, "amountIn", amountIn, "err", err)
 			errs = append(errs, err)
 			continue
