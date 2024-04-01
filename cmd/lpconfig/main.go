@@ -171,7 +171,7 @@ func run(c *cli.Context) error {
 	perma := ""
 	if c.String("network") == "testnet" {
 		pay = "https://api-dev.everpay.io"
-		perma = "https://router0-dev.permaswap.network"
+		perma = "https://router-dev.permaswap.network"
 	} else if c.String("network") == "mainnet" {
 		pay = "https://api.everpay.io"
 		perma = "https://router.permaswap.network"
