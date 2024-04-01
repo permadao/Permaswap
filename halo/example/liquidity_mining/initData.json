@@ -3,7 +3,7 @@
     "router": "0x1DF611aec4065801f416c67d2c3bC9466228Ea57",
     "pool": "0xb57de84c67306cc740021ba9ec328d9b2e351b2196caf96d8a6117a6e6bc680a",
     "baseToken": "bsc-tusdc-0xf17a50ecc5fe5f476de2da5481cdd0f0ffef7712",
-    "totalSupply": "10000000000000000000000",
-    "start": 1711616400,
-    "end": 1711789200
+    "totalSupply": "1000000000000000000000",
+    "start": 1711955700,
+    "end": 1711981800
 }

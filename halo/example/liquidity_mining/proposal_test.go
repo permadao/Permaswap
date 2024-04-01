@@ -87,8 +87,9 @@ func TestExecute(t *testing.T) {
 	initData := testGenInitData()
 	oracle := testGenOracle()
 	tx1 := &schema.Transaction{
-		Nonce:  "1005000",
-		Action: schema.TxActionSwap,
+		EverHash: "0xt1",
+		Nonce:    "1005000",
+		Action:   schema.TxActionSwap,
 		SwapOrder: &schema.SwapOrder{
 			Items: []*schema.SwapOrderItem{
 				{
@@ -118,8 +119,9 @@ func TestExecute(t *testing.T) {
 	assert.NoError(t, err)
 
 	tx2 := &schema.Transaction{
-		Nonce:  "1105000",
-		Action: schema.TxActionSwap,
+		EverHash: "0xt2",
+		Nonce:    "1105000",
+		Action:   schema.TxActionSwap,
 		SwapOrder: &schema.SwapOrder{
 			Items: []*schema.SwapOrderItem{
 				{
@@ -150,8 +152,9 @@ func TestExecute(t *testing.T) {
 	assert.NoError(t, err)
 
 	tx3 := &schema.Transaction{
-		Nonce:  "1115000",
-		Action: schema.TxActionSwap,
+		EverHash: "0xt3",
+		Nonce:    "1115000",
+		Action:   schema.TxActionSwap,
 		SwapOrder: &schema.SwapOrder{
 			Items: []*schema.SwapOrderItem{
 				{

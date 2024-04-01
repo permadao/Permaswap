@@ -36,6 +36,10 @@ type Liquidity struct {
 
 	LastMining int64             `json:"last_mining"`
 	Mined      map[string]string `json:"mined"`
+	TotalMined *big.Int          `json:"totalMined"`
+
+	// for debug
+	TxMined map[string]map[string]*big.Int `json:"txMined"` // tx hash -> lp -> amount
 }
 
 func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *schema.Oracle, localState, initData string) (*schema.StateForProposal, string, string, error) {
@@ -54,6 +58,9 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		}
 		liquidity.LastMining = liquidity.Start
 		liquidity.Mined = make(map[string]string)
+		liquidity.TotalMined = big.NewInt(0)
+
+		liquidity.TxMined = make(map[string]map[string]*big.Int)
 	} else {
 		if err := json.Unmarshal([]byte(localState), &liquidity); err != nil {
 			return state, localState, "", ErrPropsalInvalidLocalState
@@ -111,6 +118,12 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 		// amount = volume * timeElapsed * totalSupply / totalVolume / totalTime
 		lpToAmount[lp] = new(big.Int).Div(new(big.Int).Div(new(big.Int).Mul(volume, new(big.Int).Mul(timeElapsed_, totalSupply)), totalVolume), totalTime)
 	}
+
+	for _, amount := range lpToAmount {
+		liquidity.TotalMined = new(big.Int).Add(liquidity.TotalMined, amount)
+	}
+
+	liquidity.TxMined[tx.EverHash] = lpToAmount
 
 	for lp, amount := range lpToAmount {
 		err := state.Token.Transfer(POOL, lp, amount, state.FeeRecipient, big.NewInt(0), false)
