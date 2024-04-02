@@ -346,7 +346,12 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 			if len(proposal.OnlyAcceptedTxActions) > 0 && !InSlice(proposal.OnlyAcceptedTxActions, tx.Action) {
 				continue
 			}
-			// todo if proposal is unstarted,ignore it
+
+			// if proposal is unstarted,ignore it
+			if nonce/1000 < proposal.Start {
+				continue
+			}
+
 			log.Debug("execute proposal", "ID", proposal.ID, "name", proposal.Name, "tx", tx.HexHash())
 			ns, err := ProposalExecute(proposal, &tx, h.GetStateForProposal(), oracle)
 			if err != nil {
