@@ -312,16 +312,18 @@ func (r *Router) getStats(c *gin.Context) {
 			Rewards: rewards,
 			TVLs:    tvls,
 		})
-	} else {
-		poolID := c.Query("poolid")
-		if poolID == "" {
-			c.JSON(http.StatusBadRequest, NewWsErr("err_no_param"))
-			return
-		}
+	} else if poolID := c.Query("poolid"); poolID != "" {
 		volume := r.Stats.GetVolumeByPoolID(poolID)
 		tvl := r.Stats.GetTVLByPoolID(poolID)
 		c.JSON(http.StatusOK, schema.PoolStatsRes{
 			PoolID: poolID,
+			Volume: volume,
+			TVL:    tvl,
+		})
+	} else {
+		volume := r.Stats.GetTotalVolume()
+		tvl := r.Stats.GetTotalTVL()
+		c.JSON(http.StatusOK, schema.PoolStatsRes{
 			Volume: volume,
 			TVL:    tvl,
 		})

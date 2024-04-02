@@ -344,3 +344,19 @@ func (s *Stats) GetVolumeByPoolID(poolid string) (volume schema.Volume) {
 	}
 	return
 }
+
+func (s *Stats) GetTotalVolume() (volume schema.Volume) {
+	volume = schema.Volume{}
+	for _, v := range s.PoolIDToVolume24h {
+		volume.USD += v.USD
+	}
+	return
+}
+
+func (s *Stats) GetTotalTVL() (tvl schema.TVL) {
+	tvl = schema.TVL{}
+	for _, t := range s.PoolIDToTVL {
+		tvl.USD += t.USD
+	}
+	return
+}
