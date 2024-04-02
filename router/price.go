@@ -54,7 +54,7 @@ func (p *Price) updatePrice() (err error) {
 			tokenTagToPrice[token.Tag()] = price
 		}
 	}
-
+	log.Info("Updated price", "price", tokenTagToPrice)
 	p.lock.Lock()
 	defer p.lock.Unlock()
 	p.tokenTagToPrice = tokenTagToPrice
