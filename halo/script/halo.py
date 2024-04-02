@@ -140,8 +140,6 @@ elif args.action == 'terminate':
         'proposalID': args.proposal,
         'note': args.note,
     }
-    if args.params:
-        params['params'] = args.params
 else:
     parser.print_help()
 
