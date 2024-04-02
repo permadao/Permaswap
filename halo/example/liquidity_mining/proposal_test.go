@@ -91,6 +91,7 @@ func TestExecute(t *testing.T) {
 		Nonce:    "1005000",
 		Action:   schema.TxActionSwap,
 		SwapOrder: &schema.SwapOrder{
+			TimeStamp: 1005,
 			Items: []*schema.SwapOrderItem{
 				{
 					PoolID:    "0xP2",
@@ -123,6 +124,7 @@ func TestExecute(t *testing.T) {
 		Nonce:    "1105000",
 		Action:   schema.TxActionSwap,
 		SwapOrder: &schema.SwapOrder{
+			TimeStamp: 1105,
 			Items: []*schema.SwapOrderItem{
 				{
 					PoolID:    "0xP2",
@@ -156,6 +158,7 @@ func TestExecute(t *testing.T) {
 		Nonce:    "1115000",
 		Action:   schema.TxActionSwap,
 		SwapOrder: &schema.SwapOrder{
+			TimeStamp: 1115,
 			Items: []*schema.SwapOrderItem{
 				{
 					PoolID:    "0xP1",
