@@ -263,7 +263,12 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 			log.Error("router have no pools", "router", tx.Router)
 			return err
 		}
-		order, err := TxSwapParamsVerify(tx.Params, tx.Nonce, pools, oracle.EverTokens)
+
+		routerFee := false
+		if routerState.SwapFeeRecipient != "" && routerState.SwapFeeRatio != "0" {
+			routerFee = true
+		}
+		order, err := TxSwapParamsVerify(tx.Params, tx.Nonce, routerFee, pools, oracle.EverTokens)
 		if err != nil {
 			log.Error("swap params verify failed", "err", err)
 			return err

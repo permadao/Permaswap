@@ -248,7 +248,7 @@ func findPool(x, y string, pools map[string]*schema.Pool) (pool *schema.Pool) {
 	return
 }
 
-func TxSwapParamsVerify(txParams string, nonce string, pools map[string]*schema.Pool, tokens map[string]everSchema.TokenInfo) (order *schema.SwapOrder, Err error) {
+func TxSwapParamsVerify(txParams string, nonce string, routerFee bool, pools map[string]*schema.Pool, tokens map[string]everSchema.TokenInfo) (order *schema.SwapOrder, Err error) {
 	params := schema.TxSwapParams{}
 	if err := json.Unmarshal([]byte(txParams), &params); err != nil {
 		log.Error("invalid params of swap tx to unmarshal", "params", txParams, "err", err)
@@ -324,8 +324,10 @@ func TxSwapParamsVerify(txParams string, nonce string, pools map[string]*schema.
 			AmountOut: amountOut,
 		})
 	}
-	feePath := bundle.Items[len(bundle.Items)-1]
-	order.FeeRecipient = feePath.To
-	order.Fee = feePath.Amount
+	if routerFee {
+		feePath := bundle.Items[len(bundle.Items)-1]
+		order.FeeRecipient = feePath.To
+		order.Fee = feePath.Amount
+	}
 	return order, nil
 }
