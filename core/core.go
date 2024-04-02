@@ -222,7 +222,8 @@ func (c *Core) Query(msg routerSchema.UserMsgQuery) ([]schema.Path, error) {
 
 	routerFee := big.NewInt(0)
 	if c.FeeRecepient != "" && c.FeeRatio.Cmp(new(apd.Decimal).SetInt64(0)) == 1 {
-		routerFee, err = getAndCheckFee(amountIn, c.FeeRatio)
+		//routerFee, err = getAndCheckFee(amountIn, c.FeeRatio)
+		routerFee, err = getFee(amountIn, c.FeeRatio, true)
 		if err != nil {
 			return nil, err
 		}
