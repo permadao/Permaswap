@@ -31,13 +31,9 @@ func main() {
 		Flags: []cli.Flag{
 			&cli.BoolFlag{Name: "info", Aliases: []string{"i"}, Value: false, Usage: "swap info"},
 			&cli.StringFlag{Name: "router", Aliases: []string{"r"}, Value: "", Usage: "perma router http url"},
-			//&cli.StringFlag{Name: "pay", Value: "https://api-dev.everpay.io", Usage: "pay url"},
-
-			&cli.StringFlag{Name: "network", Aliases: []string{"n"}, Value: "testnet", Usage: "nework: testnet or mainnet"},
-
+			&cli.StringFlag{Name: "network", Aliases: []string{"n"}, Value: "mainnet", Usage: "nework: testnet or mainnet"},
 			&cli.StringFlag{Name: "pool_id", Aliases: []string{"p"}, Usage: "pool id"},
 			&cli.BoolFlag{Name: "full_range", Aliases: []string{"f"}, Value: false, Usage: "use full range price"},
-
 			&cli.StringFlag{Name: "low_price", Aliases: []string{"low"}, Usage: "lowest price"},
 			&cli.StringFlag{Name: "current_price", Aliases: []string{"current"}, Usage: "current price"},
 			&cli.StringFlag{Name: "high_price", Aliases: []string{"high"}, Usage: "highest price"},
