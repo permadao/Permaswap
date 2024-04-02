@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"math/big"
-	"strconv"
 
 	"github.com/permadao/permaswap/halo/hvm/schema"
 )
@@ -20,7 +19,6 @@ var (
 	ErrPropsalInvalidSwapOrder   = errors.New("err_proposal_invalid_swap_order")
 	ErrPropsalMiningNotStart     = errors.New("err_proposal_mining_not_start")
 	ErrPropsalMiningEnd          = errors.New("err_proposal_mining_end")
-	ErrPropsalInvalidNonce       = errors.New("err_proposal_invalid_nonce")
 	ErrorInvalidTimeElapsed      = errors.New("err_invalid_time_elapsed")
 	ErrPropsalInvalidTotalSupply = errors.New("err_proposal_invalid_total_supply")
 )
@@ -38,7 +36,7 @@ type Liquidity struct {
 	Mined      map[string]string `json:"mined"`
 	TotalMined *big.Int          `json:"totalMined"`
 
-	// for debug
+	// debug
 	TxMined map[string]map[string]*big.Int `json:"txMined"` // tx hash -> lp -> amount
 }
 
@@ -66,14 +64,11 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 			return state, localState, "", ErrPropsalInvalidLocalState
 		}
 	}
+
 	if liquidity.LastMining >= liquidity.End {
 		return state, localState, "", ErrPropsalMiningEnd
 	}
-	nonce, err := strconv.ParseInt(tx.Nonce, 10, 64)
-	if err != nil {
-		return state, localState, "", ErrPropsalInvalidNonce
-	}
-	now := nonce / 1000
+	now := tx.SwapOrder.TimeStamp
 	if now < liquidity.Start {
 		return state, localState, "", ErrPropsalMiningNotStart
 	}
@@ -115,7 +110,7 @@ func Execute(tx *schema.Transaction, state *schema.StateForProposal, oracle *sch
 	timeElapsed_ := big.NewInt(timeElapsed)
 	totalTime := big.NewInt(liquidity.End - liquidity.Start)
 	for lp, volume := range lpToVolume {
-		// amount = volume * timeElapsed * totalSupply / totalVolume / totalTime
+		// amount = timeElapsed * totalSupply * volume / totalVolume / totalTime
 		lpToAmount[lp] = new(big.Int).Div(new(big.Int).Div(new(big.Int).Mul(volume, new(big.Int).Mul(timeElapsed_, totalSupply)), totalVolume), totalTime)
 	}
 
