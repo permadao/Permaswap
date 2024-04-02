@@ -52,7 +52,10 @@ func (p *Price) updatePrice() (err error) {
 
 		if err == nil {
 			tokenTagToPrice[token.Tag()] = price
+		} else {
+			log.Error("Failed to get price", "token", token.Symbol, "err", err)
 		}
+		time.Sleep(1 * time.Second)
 	}
 	log.Info("Updated price", "price", tokenTagToPrice)
 	p.lock.Lock()
