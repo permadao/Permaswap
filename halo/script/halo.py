@@ -50,6 +50,10 @@ parser_call.add_argument('-i', '--proposal', type=str, dest='proposal', help='pr
 parser_call.add_argument('-f', '--function', type=str, dest='function', help='proposal function to call')
 parser_call.add_argument('-p', '--params', type=str, dest='params', help='call params')
 
+parser_terminate = subparsers.add_parser('terminate', help='terminate a proposal')
+parser_terminate.add_argument('-i', '--proposal', type=str, dest='proposal', help='proposal id')
+parser_terminate.add_argument('-n', '--note', type=str, dest='note', help='note of terminate proposal')
+
 args = parser.parse_args()
 
 signer = get_singer(args.wallet)
@@ -125,6 +129,16 @@ elif args.action == 'call':
     params = {
         'proposalID': args.proposal,
         'function': args.function,
+    }
+    if args.params:
+        params['params'] = args.params
+elif args.action == 'terminate':
+    if not args.proposal:
+        print(Fore.RED + 'invalid terminate options' + Style.RESET_ALL)
+        sys.exit(1)
+    params = {
+        'proposalID': args.proposal,
+        'note': args.note,
     }
     if args.params:
         params['params'] = args.params

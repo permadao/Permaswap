@@ -103,6 +103,20 @@ func (h *HVM) VerifyTx(tx schema.Transaction, oracle *schema.Oracle) (err error)
 			return schema.ErrNoProposalFound
 		}
 
+	case schema.TxActionTerminate:
+		if err := h.verifyProposer(tx.From); err != nil {
+			return err
+		}
+
+		proposalID, _, err := TxTerminateParamsVerify(tx.Params)
+		if err != nil {
+			return err
+		}
+		proposal := FindProposal(h.Proposals, proposalID)
+		if proposal == nil {
+			return schema.ErrNoProposalFound
+		}
+
 	default:
 		return schema.ErrInvalidTxAction
 	}
@@ -252,6 +266,28 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 			return schema.ErrNoProposalFound
 		}
 
+	case schema.TxActionTerminate:
+		if err := h.verifyProposer(tx.From); err != nil {
+			return err
+		}
+
+		proposalID, _, err := TxTerminateParamsVerify(tx.Params)
+		if err != nil {
+			return err
+		}
+		proposalToTerminate := FindProposal(h.Proposals, proposalID)
+		if proposalToTerminate == nil {
+			return schema.ErrNoProposalFound
+		}
+		proposals := []*schema.Proposal{}
+		for _, proposal := range h.Proposals {
+			if proposal.ID == proposalID {
+				continue
+			}
+			proposals = append(proposals, proposal)
+		}
+		h.Proposals = proposals
+
 	case schema.TxActionSwap:
 		routerState, ok := h.RouterStates[tx.Router]
 		if !ok {
@@ -310,7 +346,7 @@ func (h *HVM) ExecuteTx(tx schema.Transaction, oracle *schema.Oracle) (err error
 			if len(proposal.OnlyAcceptedTxActions) > 0 && !InSlice(proposal.OnlyAcceptedTxActions, tx.Action) {
 				continue
 			}
-
+			// todo if proposal is unstarted,ignore it
 			log.Debug("execute proposal", "ID", proposal.ID, "name", proposal.Name, "tx", tx.HexHash())
 			ns, err := ProposalExecute(proposal, &tx, h.GetStateForProposal(), oracle)
 			if err != nil {

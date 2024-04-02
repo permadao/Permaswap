@@ -236,6 +236,20 @@ func TxCallParamsVerify(txParams string) (proposalID, function, callParams strin
 	return proposalID, function, params.Params, nil
 }
 
+func TxTerminateParamsVerify(txParams string) (proposalID, note string, err error) {
+	params := schema.TxTerminateParams{}
+	if err := json.Unmarshal([]byte(txParams), &params); err != nil {
+		log.Error("invalid params of terminate tx to unmarshal", "params", txParams, "err", err)
+		return "", "", schema.ErrInvalidTxParams
+	}
+	proposalID = params.ProposalID
+	if proposalID == "" {
+		log.Error("no proposal id of terminate tx ")
+		return "", "", schema.ErrInvalidTxParams
+	}
+	return proposalID, params.Note, nil
+}
+
 func findPool(x, y string, pools map[string]*schema.Pool) (pool *schema.Pool) {
 	for _, pool := range pools {
 		if pool.TokenXTag == x && pool.TokenYTag == y {

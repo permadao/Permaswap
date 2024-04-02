@@ -30,8 +30,9 @@ const (
 	TxActionLeave = "leave"
 
 	// proposal
-	TxActionPropose = "propose"
-	TxActionCall    = "call"
+	TxActionPropose   = "propose"
+	TxActionCall      = "call"
+	TxActionTerminate = "terminate"
 
 	TxActionSwap = "swap"
 )
@@ -119,6 +120,11 @@ type TxCallParams struct {
 	ProposalID string `json:"proposalID"` // proposal id is hexhash
 	Function   string `json:"function"`
 	Params     string `json:"params"`
+}
+
+type TxTerminateParams struct {
+	ProposalID string `json:"proposalID"` // proposal id is hexhash
+	Note       string `json:"note"`
 }
 
 type SwapOrderItem struct {
