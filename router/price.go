@@ -57,7 +57,7 @@ func (p *Price) updatePrice() (err error) {
 		}
 		time.Sleep(1 * time.Second)
 	}
-	log.Info("Updated price", "price", tokenTagToPrice)
+	log.Debug("Updated price", "price", tokenTagToPrice)
 	p.lock.Lock()
 	defer p.lock.Unlock()
 	p.tokenTagToPrice = tokenTagToPrice
