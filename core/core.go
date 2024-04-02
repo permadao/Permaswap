@@ -314,7 +314,7 @@ func (c *Core) Update(userAddr string, paths []schema.Path) error {
 	return c.update(userAddr, paths, false)
 }
 
-func (c *Core) verifyPathFee(user string, paths []schema.Path) error {
+func (c *Core) verifyRouterFee(user string, paths []schema.Path) error {
 	tokenIn := paths[0].TokenTag
 	pathFee := paths[len(paths)-1]
 	amount, ok := new(big.Int).SetString(pathFee.Amount, 10)
@@ -338,7 +338,9 @@ func (c *Core) verifyPathFee(user string, paths []schema.Path) error {
 			amountIn.Add(amountIn, a)
 		}
 	}
-	fee, err := getAndCheckFee(amountIn, c.FeeRatio)
+	//fee, err := getAndCheckFee(amountIn, c.FeeRatio)
+	fee, err := getFee(amountIn, c.FeeRatio, true)
+
 	if err != nil {
 		return ERR_INVALID_PATH_FEE
 	}
@@ -361,7 +363,7 @@ func (c *Core) update(userAddr string, paths []schema.Path, isDryRun bool) error
 	}
 
 	if c.FeeRecepient != "" && c.FeeRatio.Cmp(new(apd.Decimal).SetInt64(0)) == 1 {
-		err = c.verifyPathFee(userAddr, paths)
+		err = c.verifyRouterFee(userAddr, paths)
 		if err != nil {
 			return err
 		}
