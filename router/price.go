@@ -29,7 +29,7 @@ func (p *Price) Run() {
 	go func() {
 		for {
 			p.updatePrice()
-			time.Sleep(2 * time.Minute)
+			time.Sleep(10 * time.Minute)
 		}
 	}()
 }
