@@ -27,8 +27,8 @@ var MinAmountInsForPriceQuery = map[string]string{
 	"everpay-acnh-0xac4cbc2009cf9ad96c2e1a4b34b1c8cb312fbce4":                                                    "10000000",            // 0.1 achn
 	"ethereum-map-0x9e976f211daea0d652912ab99b0dc21a7fd728e4":                                                    "1000000000000000000", // 1 map
 	"bsc-usdt-0x55d398326f99059ff775485246999027b3197955":                                                        "100000000000000000",  // 0.1 busdt
-	"aostest-aocred-Sa0iBLPNyJQrwpTTG-tWLQU-1QeUAJA73DdxGGiKoJc":                                                 "1000",                // 1 aocred
-	"aostest-trunk-OT9qTE2467gcozb2g8R6D6N3nQS94ENcaAIJfUzHCww":                                                  "1000",                // 1 aocred
+	"aostest-aocred-Sa0iBLPNyJQrwpTTG-tWLQU-1QeUAJA73DdxGGiKoJc":                                                 "5000",                // 5 aocred
+	"aostest-trunk-OT9qTE2467gcozb2g8R6D6N3nQS94ENcaAIJfUzHCww":                                                  "3000",                // 3 trunk
 	"aostest-0rbt-BUhZLMwQ6yZHguLtJYA5lLUa9LQzLXMXRfaq9FVcPJc":                                                   "1000000000000",       // 1 0rbt
 	"psntest-halo-0x0000000000000000000000000000000000000000":                                                    "1000000000000000000", // 1 halo
 	// chainID:5
