@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"sync"
 	"time"
@@ -9,6 +10,7 @@ import (
 	everSchema "github.com/everVision/everpay-kits/schema"
 
 	"github.com/everVision/everpay-kits/sdk"
+	hvmSchema "github.com/permadao/permaswap/halo/hvm/schema"
 	halosdk "github.com/permadao/permaswap/halo/sdk"
 
 	"github.com/gin-gonic/gin"
@@ -238,7 +240,7 @@ func (r *Router) Run(port, haloAPIURLPrefix string) {
 	}
 
 	if r.haloSDK != nil {
-		if err := r.Join(); err != nil {
+		if err := r.Join(); err != nil && errors.Is(err, hvmSchema.ErrRouterAlreadyJoined) {
 			log.Error("failed to join network", "err", err)
 			panic(err)
 		}

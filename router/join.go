@@ -25,7 +25,7 @@ func (r *Router) Join() error {
 	}
 	tx, err := r.haloSDK.Join(routerState)
 	if err != nil {
-		log.Error("AutoJoin tx submit failed: %v", err)
+		log.Error("AutoJoin tx submit failed", "error", err)
 		return err
 	}
 	log.Info("AutoJoin tx submit success", "tx", tx.EverHash)
