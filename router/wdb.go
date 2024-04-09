@@ -72,7 +72,7 @@ func (w *WDB) GetVolumesByTime(start, end time.Time) (volumes []*schema.PermaVol
 }
 
 func (w *WDB) SumVolumesByTime(start, end time.Time) (res []*schema.SumPermaVolumeRes, err error) {
-	err = w.db.Model(&schema.PermaVolume{}).Select("pool_id, lp_id, acc_id, sum(amount_x) as amount_x, sum(amount_y) as amount_y, sum(reward_x) as reward_x, sum(reward_y) as reward_y, count(*) as swap_count").
+	err = w.db.Model(&schema.PermaVolume{}).Select("pool_id, lp_id, acc_id, sum(amount_x) as amount_x, sum(amount_y) as amount_y, sum(reward_x) as reward_x, sum(reward_y) as reward_y").
 		Where("created_at BETWEEN ? AND ?", start, end).
 		Group("pool_id").Group("lp_id").Group("acc_id").
 		Scan(&res).Error
@@ -80,9 +80,16 @@ func (w *WDB) SumVolumesByTime(start, end time.Time) (res []*schema.SumPermaVolu
 }
 
 func (w *WDB) SumPoolVolumesByTime(start, end time.Time) (res []*schema.SumPermaVolumeRes, err error) {
-	err = w.db.Model(&schema.PermaVolume{}).Select("pool_id, sum(amount_x) as amount_x, sum(amount_y) as amount_y, sum(reward_x) as reward_x, sum(reward_y) as reward_y, count(*) as swap_count").
+	err = w.db.Model(&schema.PermaVolume{}).Select("pool_id, sum(amount_x) as amount_x, sum(amount_y) as amount_y, sum(reward_x) as reward_x, sum(reward_y) as reward_y").
 		Where("created_at BETWEEN ? AND ?", start, end).
 		Group("pool_id").Scan(&res).Error
+	return
+}
+
+func (w *WDB) SumPoolSwapCountByTime(start, end time.Time) (res []*schema.SumPermaSwapCountRes, err error) {
+	err = w.db.Model(&schema.PermaVolume{}).Select("pool_id, count(*) as swap_count").
+		Where("created_at BETWEEN ? AND ?", start, end).
+		Group("pool_id").Group("ever_hash").Scan(&res).Error
 	return
 }
 

@@ -76,7 +76,7 @@ func (s *Stats) Run() {
 
 }
 
-func (s *Stats) sumPermaVolumeResToVolume(res schema.SumPermaVolumeRes) schema.Volume {
+func (s *Stats) sumPermaVolumeResToVolume(res schema.SumPermaVolumeRes, swapCount int64) schema.Volume {
 	var volumeInUSD, rewardInUSD float64
 
 	tokenX := s.pools[res.PoolID].TokenXTag
@@ -110,7 +110,7 @@ func (s *Stats) sumPermaVolumeResToVolume(res schema.SumPermaVolumeRes) schema.V
 		RewardX:   res.RewardX,
 		RewardY:   res.RewardY,
 		RewardUSD: rewardInUSD,
-		SwapCount: res.SwapCount,
+		SwapCount: swapCount,
 	}
 
 	return v
@@ -143,7 +143,7 @@ func (s *Stats) updateAccVolume() error {
 		if _, ok := s.pools[poolID]; !ok {
 			continue
 		}
-		v := s.sumPermaVolumeResToVolume(*sv)
+		v := s.sumPermaVolumeResToVolume(*sv, 0)
 		accIDToVolume24h[sv.AccID] = append(accIDToVolume24h[sv.AccID], &v)
 	}
 	for accid := range accIDToVolume24h {
@@ -168,12 +168,26 @@ func (s *Stats) updatePoolVolume() error {
 	if err != nil {
 		return err
 	}
+
+	scRes, err := s.wdb.SumPoolSwapCountByTime(start, time.Now())
+	if err != nil {
+		return err
+	}
+	poolIDToSwapCount := make(map[string]int64)
+	for _, sc := range scRes {
+		poolIDToSwapCount[sc.PoolID] = sc.SwapCount
+	}
+
 	for _, sv := range res {
 		poolID := sv.PoolID
 		if _, ok := s.pools[poolID]; !ok {
 			continue
 		}
-		v := s.sumPermaVolumeResToVolume(*sv)
+		swapCount, ok := poolIDToSwapCount[poolID]
+		if !ok {
+			swapCount = 0
+		}
+		v := s.sumPermaVolumeResToVolume(*sv, swapCount)
 		poolIDToVolume24h[sv.PoolID] = &v
 	}
 
