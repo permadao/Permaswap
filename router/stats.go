@@ -164,12 +164,13 @@ func (s *Stats) updatePoolVolume() error {
 	poolIDToVolume24h := make(map[string]*schema.Volume)
 
 	start := time.Now().Add(-24 * time.Hour)
-	res, err := s.wdb.SumPoolVolumesByTime(start, time.Now())
+	now := time.Now()
+	res, err := s.wdb.SumPoolVolumesByTime(start, now)
 	if err != nil {
 		return err
 	}
 
-	scRes, err := s.wdb.SumPoolSwapCountByTime(start, time.Now())
+	scRes, err := s.wdb.SumPoolSwapCountByTime(start, now)
 	if err != nil {
 		return err
 	}

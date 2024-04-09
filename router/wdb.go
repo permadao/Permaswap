@@ -87,9 +87,9 @@ func (w *WDB) SumPoolVolumesByTime(start, end time.Time) (res []*schema.SumPerma
 }
 
 func (w *WDB) SumPoolSwapCountByTime(start, end time.Time) (res []*schema.SumPermaSwapCountRes, err error) {
-	err = w.db.Model(&schema.PermaVolume{}).Select("pool_id, count(*) as swap_count").
+	err = w.db.Model(&schema.PermaVolume{}).Select("pool_id, count(distinct ever_hash) as swap_count").
 		Where("created_at BETWEEN ? AND ?", start, end).
-		Group("pool_id").Group("ever_hash").Scan(&res).Error
+		Group("pool_id").Scan(&res).Error
 	return
 }
 
