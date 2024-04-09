@@ -236,8 +236,12 @@ func (r *Router) Run(port, haloAPIURLPrefix string) {
 	if r.haloServer != nil {
 		r.haloServer.Run("")
 	}
+
 	if r.haloSDK != nil {
-		r.Join()
+		if err := r.Join(); err != nil {
+			log.Error("failed to join network", "err", err)
+			panic(err)
+		}
 	}
 }
 

@@ -2,7 +2,7 @@ package router
 
 import "github.com/permadao/permaswap/halo/hvm/schema"
 
-func (r *Router) Join() {
+func (r *Router) Join() error {
 	pools := map[string]*schema.Pool{}
 	for _, pool := range r.core.Pools {
 		pools[pool.ID()] = &schema.Pool{
@@ -26,7 +26,8 @@ func (r *Router) Join() {
 	tx, err := r.haloSDK.Join(routerState)
 	if err != nil {
 		log.Error("AutoJoin tx submit failed: %v", err)
-		return
+		return err
 	}
 	log.Info("AutoJoin tx submit success", "tx", tx.EverHash)
+	return nil
 }
