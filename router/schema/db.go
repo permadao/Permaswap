@@ -50,13 +50,14 @@ type PermaLpReward struct {
 }
 
 type SumPermaVolumeRes struct {
-	PoolID  string  `json:"poolID"`
-	AccID   string  `json:"accID"`
-	LpID    string  `json:"lpID"`
-	AmountX float64 `json:"amountX"`
-	AmountY float64 `json:"amountY"`
-	RewardX float64 `json:"rewardX"`
-	RewardY float64 `json:"rewardY"`
+	PoolID    string  `json:"poolID"`
+	AccID     string  `json:"accID"`
+	LpID      string  `json:"lpID"`
+	AmountX   float64 `json:"amountX"`
+	AmountY   float64 `json:"amountY"`
+	RewardX   float64 `json:"rewardX"`
+	RewardY   float64 `json:"rewardY"`
+	SwapCount int64   `json:"swapCount"`
 }
 
 type NFTWhiteList struct {

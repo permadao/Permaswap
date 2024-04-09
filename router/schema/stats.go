@@ -14,6 +14,7 @@ type Volume struct {
 	RewardX   float64 `json:"rewardX"`
 	RewardY   float64 `json:"rewardY"`
 	RewardUSD float64 `json:"rewardInUSD"`
+	SwapCount int64   `json:"swapCount"`
 }
 
 type TVL struct {
