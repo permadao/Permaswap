@@ -110,6 +110,7 @@ func (s *Stats) sumPermaVolumeResToVolume(res schema.SumPermaVolumeRes) schema.V
 		RewardX:   res.RewardX,
 		RewardY:   res.RewardY,
 		RewardUSD: rewardInUSD,
+		SwapCount: res.SwapCount,
 	}
 
 	return v
