@@ -43,10 +43,11 @@ func (l *Lp) processPendingOrder() {
 		l.processRouterOrder(tx)
 	}
 	if l.order != nil {
-		panic("process pending order failed")
+		log.Info("pending order was not submitted to everpay. ignore it.")
+		l.removePendingOrder()
+		return
 	}
 	log.Info("finish pending order")
-
 }
 
 func (l *Lp) getFilePath(fileName string) (string, error) {
