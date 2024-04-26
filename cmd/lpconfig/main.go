@@ -71,6 +71,7 @@ func getSwapInfo(url string) (info routerSchema.InfoRes, err error) {
 func getRevisedSqrtPrice(price string, decimalsX, decimalsY int) (*apd.Decimal, error) {
 	price_, ok := new(big.Float).SetString(price)
 	if !ok {
+		fmt.Println("invalid price")
 		return nil, ErrInvalidParam
 	}
 	factor := new(big.Float).SetFloat64(math.Pow(10, float64((decimalsY - decimalsX))))
@@ -80,6 +81,7 @@ func getRevisedSqrtPrice(price string, decimalsX, decimalsY int) (*apd.Decimal, 
 func getRevisedSqrtPrice2(price string, decimalsX, decimalsY int) (*apd.Decimal, error) {
 	price_, _, err := new(apd.Decimal).SetString(price)
 	if err != nil {
+		fmt.Println("invalid price")
 		return nil, ErrInvalidParam
 	}
 
@@ -90,10 +92,12 @@ func getRevisedSqrtPrice2(price string, decimalsX, decimalsY int) (*apd.Decimal,
 	exponent := new(apd.Decimal).SetInt64(int64(decimalsY - decimalsX))
 	_, err = content.Pow(factor, ten, exponent)
 	if err != nil {
+		fmt.Println("invalid price")
 		return nil, ErrInvalidParam
 	}
 	_, err = content.Mul(price_, price_, factor)
 	if err != nil {
+		fmt.Println("invalid price")
 		return nil, ErrInvalidParam
 	}
 	return core.SqrtPrice(price_.String())
@@ -102,6 +106,7 @@ func getRevisedSqrtPrice2(price string, decimalsX, decimalsY int) (*apd.Decimal,
 func getRevisedAmount(amount string, decimals int, isMul bool) (string, error) {
 	amount_, ok := new(big.Float).SetString(amount)
 	if !ok {
+		fmt.Println("invalid amount")
 		return "", ErrInvalidParam
 	}
 	factor := new(big.Float).SetFloat64(math.Pow(10, float64(decimals)))
@@ -114,6 +119,7 @@ func getRevisedAmount(amount string, decimals int, isMul bool) (string, error) {
 func getRevisedAmount2(amount string, decimals int, isMul bool) (string, error) {
 	amount_, _, err := new(apd.Decimal).SetString(amount)
 	if err != nil {
+		fmt.Println("invalid amount")
 		return "", ErrInvalidParam
 	}
 
@@ -124,17 +130,20 @@ func getRevisedAmount2(amount string, decimals int, isMul bool) (string, error) 
 	exponent := new(apd.Decimal).SetInt64(int64(decimals))
 	_, err = content.Pow(factor, ten, exponent)
 	if err != nil {
+		fmt.Println("invalid amount")
 		return "", ErrInvalidParam
 	}
 
 	if isMul {
 		_, err = content.Mul(amount_, amount_, factor)
 		if err != nil {
+			fmt.Println("invalid amount")
 			return "", ErrInvalidParam
 		}
 	} else {
 		_, err = content.Quo(amount_, amount_, factor)
 		if err != nil {
+			fmt.Println("invalid amount")
 			return "", ErrInvalidParam
 		}
 	}
@@ -172,6 +181,7 @@ func run(c *cli.Context) error {
 		pay = "https://api.everpay.io"
 		perma = "https://router.permaswap.network"
 	} else {
+		fmt.Println("invalid network")
 		return ErrInvalidParam
 	}
 
@@ -198,10 +208,12 @@ func run(c *cli.Context) error {
 	}
 	pool, ok := info.PoolList[c.String("pool_id")]
 	if !ok {
+		fmt.Println("pool not found")
 		return ErrInvalidParam
 	}
 
 	if c.String("amount_x") == "" && c.String("amount_y") == "" {
+		fmt.Println("no amount_x or amount_y")
 		return ErrMissParam
 	}
 
@@ -248,6 +260,7 @@ func run(c *cli.Context) error {
 
 	priceDirection := c.String("price_direction")
 	if priceDirection != coreSchema.PriceDirectionBoth && priceDirection != coreSchema.PriceDirectionUp && priceDirection != coreSchema.PriceDirectionDown {
+		fmt.Println("invalid price direction")
 		return ErrInvalidParam
 	}
 
@@ -323,3 +336,4 @@ func run(c *cli.Context) error {
 
 	return nil
 }
+
