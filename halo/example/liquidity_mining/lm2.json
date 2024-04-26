@@ -1,0 +1,9 @@
+{
+    "name": "lm2-trunk-ar",
+    "router": "0xD110107aDb30BCe6C0646EAF77cC1C815012331d",
+    "pool": "0x6f5c2032a72144c4bab8db3fa6495e89b9440c47fe248e58845ec1c47926eef2",
+    "baseToken": "arweave,ethereum-ar-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,0x4fadc7a98f2dc96510e42dd1a74141eeae0c1543",
+    "totalSupply": "12000000000000000000000",
+    "start": 1713355200,
+    "end": 1714651200
+}

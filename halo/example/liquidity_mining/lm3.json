@@ -1,0 +1,9 @@
+{
+    "name": "lm3-aocred-ar",
+    "router": "0xD110107aDb30BCe6C0646EAF77cC1C815012331d",
+    "pool": "0x17cf053e2c1e40ea7dc2b073d4771b9a8740605c0aacbb7274f7e4a5ec6b9712",
+    "baseToken": "arweave,ethereum-ar-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,0x4fadc7a98f2dc96510e42dd1a74141eeae0c1543",
+    "totalSupply": "30000000000000000000000",
+    "start": 1713960000,
+    "end": 1716552000
+}
