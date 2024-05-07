@@ -98,6 +98,11 @@ func (l *Lp) processOrderStatus(msg routerSchema.OrderMsgStatus) {
 		return
 	}
 
+	if msg.EverHash == "" {
+		log.Warn("invalid everHash", "everHash", msg.EverHash)
+		return
+	}
+
 	// verify order on everPay with retry
 	tx, bundle, status, err := l.rsdk.EverSDK.Cli.BundleByHash(msg.EverHash)
 	if err != nil {
