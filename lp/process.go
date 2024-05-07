@@ -99,7 +99,7 @@ func (l *Lp) processOrderStatus(msg routerSchema.OrderMsgStatus) {
 	}
 
 	if msg.EverHash == "" {
-		log.Warn("invalid everHash", "everHash", msg.EverHash)
+		log.Warn("No everHash", "everHash", msg.EverHash, "status", msg.Status)
 		return
 	}
 
