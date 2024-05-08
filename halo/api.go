@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"math/big"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-contrib/cors"
@@ -76,6 +77,13 @@ func (h *Halo) getProposal(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, schema.ErrMissParams.Error())
 		return
 	}
+
+	detail_ := c.DefaultQuery("detail", "false")
+	detail, err := strconv.ParseBool(detail_)
+	if err != nil {
+		detail = false
+	}
+
 	h.stateChan <- struct{}{}
 	stateRes := <-h.stateResChan
 
@@ -89,6 +97,9 @@ func (h *Halo) getProposal(c *gin.Context) {
 	}
 	for _, p := range state.Proposals {
 		if p.ID == c.Param("id") {
+			if !detail {
+				p.ExecutedTxs = map[string]string{}
+			}
 			c.JSON(http.StatusOK, p)
 			return
 		}
