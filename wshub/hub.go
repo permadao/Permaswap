@@ -16,7 +16,7 @@ const (
 	// Time allowed to write a message to the peer.
 	wsWriteWait = 5 * time.Second
 	// Maximum message size allowed from peer.
-	wsMaxMsgSize = 1024 * 32
+	wsMaxMsgSize = 1024 * 128
 
 	// Time allowed to read the next pong message from the peer.
 	wsPongWait   = 10 * time.Second
