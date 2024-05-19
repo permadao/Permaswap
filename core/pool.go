@@ -234,7 +234,7 @@ func PoolSwap(pool *schema.Pool, tokenIn, tokenOut string, amountIn *big.Int, ex
 		//make sure fee > 1 for ever lp
 		_, err = getAndCheckFee(amountIn_, pool.FeeRatio)
 		if err != nil {
-			log.Error("func PoolSwap: getAndCheckFee error", "err", err, "amountIn", amountIn_.String(), "fee", pool.FeeRatio, "lp", lp.AccID)
+			//log.Error("func PoolSwap: getAndCheckFee error", "err", err, "amountIn", amountIn_.String(), "fee", pool.FeeRatio, "lp", lp.AccID)
 			continue
 		}
 
