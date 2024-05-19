@@ -100,7 +100,7 @@ func getAndCheckFee(amountIn *big.Int, feeRatio *apd.Decimal) (*big.Int, error) 
 		return nil, ERR_INVALID_FEE
 	}
 	if fee.Cmp(big.NewInt(1)) != 1 {
-		log.Error("fee is too small", "amoutIn", amountIn.String(), "fee", fee)
+		//log.Error("fee is too small", "amoutIn", amountIn.String(), "fee", fee)
 		return nil, ERR_INVALID_AMOUNT
 	}
 	return fee, nil
