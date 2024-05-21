@@ -32,6 +32,8 @@ var MinAmountInsForPriceQuery = map[string]string{
 	"aostest-trunk-OT9qTE2467gcozb2g8R6D6N3nQS94ENcaAIJfUzHCww":                                                  "2000",                // 2 trunk
 	"aostest-0rbt-BUhZLMwQ6yZHguLtJYA5lLUa9LQzLXMXRfaq9FVcPJc":                                                   "1000000000000",       // 1 0rbt
 	"psntest-halo-0x0000000000000000000000000000000000000000":                                                    "1000000000000000000", // 1 halo
+	"aostest-exp-aYrCboXVSl1AXL9gPFe3tfRxRf0ZmkOXH65mKT0HHZw":                                                    "10000000000",         // 0.01 exp
+
 	// chainID:5
 	"ethereum-usdc-0xb7a4f3e9097c08da09517b5ab877f7a917224ede":                                                   "100000",      // 0.1 usdc
 	"ethereum-usdt-0xd85476c906b5301e8e9eb58d174a6f96b9dfc5ee":                                                   "100000",      // 0.1 usdt
