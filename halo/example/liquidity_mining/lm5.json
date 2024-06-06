@@ -1,0 +1,9 @@
+{
+    "name": "lm5-ar-usdc",
+    "router": "0xD110107aDb30BCe6C0646EAF77cC1C815012331d",
+    "pool": "0x0750e26dbffb85e66891b71b9e1049c4be6d94dab938bbb06573ca6178615981",
+    "baseToken": "arweave,ethereum-ar-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,0x4fadc7a98f2dc96510e42dd1a74141eeae0c1543",
+    "totalSupply": "100000000000000000000000",
+    "start": 1717675200,
+    "end": 1718884800
+}
