@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-contrib/cors"
+	"github.com/permadao/permaswap/halo/account"
 	hvmSchema "github.com/permadao/permaswap/halo/hvm/schema"
 	tokSchema "github.com/permadao/permaswap/halo/token/schema"
 
@@ -55,6 +56,7 @@ func (h *Halo) info(c *gin.Context) {
 	}
 	state.Executed = []string{}
 	state.Validity = map[string]bool{}
+	state.Accounts = map[string]*account.Account{}
 
 	pids := []string{}
 	for _, p := range state.Proposals {
