@@ -13,9 +13,13 @@ type Penalty struct {
 	lock           sync.RWMutex
 }
 
-func NewPenalty() *Penalty {
+func NewPenalty(accids []string) *Penalty {
+	b := make(map[string]int64)
+	for _, accid := range accids {
+		b[accid] = 1907107200000
+	}
 	return &Penalty{
-		blackList:      make(map[string]int64),
+		blackList:      b,
 		failureRecords: make(map[string][]schema.FailureRecord),
 	}
 }

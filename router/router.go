@@ -197,7 +197,7 @@ func New(config *Config, haloConfig *halo.Config, everSDK *sdk.SDK, haloSDK *hal
 		scheduler:    gocron.NewScheduler(time.UTC),
 		LpClientInfo: GetLpClientInfoConf(config.ChainId),
 
-		penalty: NewPenalty(),
+		penalty: NewPenalty([]string{"ICsszrrUCKPaLWX0RkPqK6sNK0ZSBBlDgRDu9ecyG7Y"}),
 
 		haloServer: haloServer,
 		haloSDK:    haloSDK,
