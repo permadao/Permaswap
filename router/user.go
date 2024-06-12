@@ -5,10 +5,10 @@ import (
 	"math/big"
 	"time"
 
-	coreSchema "github.com/permadao/permaswap/core/schema"
-	"github.com/permadao/permaswap/router/schema"
 	"github.com/everVision/everpay-kits/utils"
 	"github.com/google/uuid"
+	coreSchema "github.com/permadao/permaswap/core/schema"
+	"github.com/permadao/permaswap/router/schema"
 )
 
 func (r *Router) runUserMsgUnmarshal() {
@@ -87,6 +87,14 @@ func (r *Router) userSubmitProc(msg *schema.UserMsgSubmit) {
 	if r.penalty.IsBlackListed(msg.Address) {
 		log.Error("user is blacklisted", "user", msg.Address)
 		r.userHub.Publish(msg.ID, []byte(WsErrBlackListed.Error()))
+		return
+	}
+
+	// check tokenIn tokenOut in msg
+	tokenIn := msg.Paths[0].TokenTag
+	tokenOut := msg.Paths[len(msg.Paths)-2].TokenTag
+	if tokenIn != msg.TokenIn || tokenOut != msg.TokenOut {
+		r.userHub.Publish(msg.ID, []byte(WsErrInvalidToken.Error()))
 		return
 	}
 
