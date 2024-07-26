@@ -34,6 +34,7 @@ var MinAmountInsForPriceQuery = map[string]string{
 	"psntest-halo-0x0000000000000000000000000000000000000000":                                                    "1000000000000000000", // 1 halo
 	"aostest-exp(ario)-aYrCboXVSl1AXL9gPFe3tfRxRf0ZmkOXH65mKT0HHZw":                                              "100000",              // 0.1 exp
 	"aostest-ar-xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10":                                                     "10000000000",         // 0.01 ar;
+	"aostest-bp-_HbnZH5blAZH0CNT1k_dpRrGXWCzBg34hjMUkoDrXr0":                                                     "100000000000",        // 0.1 bp
 
 	// chainID:5
 	"ethereum-usdc-0xb7a4f3e9097c08da09517b5ab877f7a917224ede":                                                   "100000",      // 0.1 usdc
