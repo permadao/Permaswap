@@ -369,7 +369,7 @@ func (o *Order) submitToEver() {
 	if err != nil {
 		log.Error("can not get submited bundle tx in first time", "everHash", o.EverHash, "err", err)
 
-		for i := 0; i < 1000; i++ {
+		for i := 0; i < 300; i++ {
 			time.Sleep(200 * time.Millisecond)
 			_, _, status, err = everSDK.Cli.BundleByHash(o.EverHash)
 			if err == nil {
