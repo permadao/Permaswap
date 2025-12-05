@@ -1,9 +1,0 @@
-{
-    "name": "dev_grant",
-    "description": "This is a grant proposal for the development of the project.",
-    "stakePool": "dev",
-    "voteStartAt": 1711819800,
-    "threshold": "10000000000000000000",
-    "minVoteDuration": 172800,
-    "confirmDuration": 86400
-}
